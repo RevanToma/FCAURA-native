@@ -21,7 +21,8 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     "open-sans": require("./assets/fonts/OpenSans_Condensed-Medium.ttf"),
     "lato-bold": require("./assets/fonts/Lato-Bold.ttf"),
-    "soursce-sans": require("./assets/fonts/SourceSans3-Medium.ttf"),
+    "source-sans": require("./assets/fonts/SourceSans3-Medium.ttf"),
+    "rubik-microbe": require("./assets/fonts/RubikMicrobe-Regular.ttf"),
   });
   useEffect(() => {
     async function hideSplash() {
@@ -52,7 +53,7 @@ export default function App() {
               height: Platform.OS === "ios" ? 90 : 60,
               paddingBottom: Platform.OS === "ios" ? 25 : 10,
               paddingTop: 5,
-              shadowColor: "#000",
+              shadowColor: "#1e1e1e",
               shadowOffset: {
                 width: 0,
                 height: 2,

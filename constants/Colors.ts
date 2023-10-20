@@ -5,4 +5,5 @@ export const Colors = {
   settingsBackground: "#303841",
   alternative: "#1E1E1E",
   white: "#F7F7F7",
+  bannerColor: "#F1DD56",
 };

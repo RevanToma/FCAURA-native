@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Animated, Image, StyleSheet, View } from "react-native";
+import { Animated, Image, StyleSheet, View, Text } from "react-native";
 import FadeIn from "react-native-fade-in-image";
 import { Colors } from "../../../constants/Colors";
 
