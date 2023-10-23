@@ -50,15 +50,21 @@ const LatestMatchTable = () => {
           <View
             style={[
               styles.matchContainer,
-              { backgroundColor: index % 2 === 0 ? "#323232" : "#3f3f3f" },
+              { backgroundColor: index % 2 === 0 ? "#2C2C2C" : "#1D1D1D" },
             ]}
           >
             <Text style={styles.matchDate}>{item.date}</Text>
-            <Text>{item.awayTeam.name}</Text>
+            <Text style={[styles.matchText, styles.teamNameContainer]}>
+              {item.awayTeam.name}
+            </Text>
             <Image source={item.awayTeam.src} style={styles.teamLogo} />
-            <Text>{item.result}</Text>
+            <Text style={[styles.matchText, styles.scoreContainer]}>
+              {item.result}
+            </Text>
             <Image source={item.homeTeam.src} style={styles.teamLogo} />
-            <Text>{item.homeTeam.name}</Text>
+            <Text style={[styles.matchText, { color: Colors.yellow }]}>
+              {item.homeTeam.name}
+            </Text>
           </View>
         )}
         scrollEnabled={false}
@@ -67,11 +73,13 @@ const LatestMatchTable = () => {
       <View style={styles.paginationContainer}>
         {currentPage > 1 && (
           <TouchableOpacity onPress={prevPage}>
-            <Text style={styles.paginationText}>Previous</Text>
+            <Text style={[styles.paginationText, { marginLeft: "auto" }]}>
+              Previous
+            </Text>
           </TouchableOpacity>
         )}
         {LatestMatchesData.length > lastMatchIndex && (
-          <TouchableOpacity onPress={nextPage}>
+          <TouchableOpacity onPress={nextPage} style={{ marginLeft: "auto" }}>
             <Text style={styles.paginationText}>Next</Text>
           </TouchableOpacity>
         )}
@@ -82,20 +90,30 @@ const LatestMatchTable = () => {
 
 const styles = StyleSheet.create({
   root: {
-    width: "90%",
+    width: "95%",
     backgroundColor: "#000000",
     borderRadius: 10,
-    padding: 10,
-    flex: 1,
+    paddingVertical: 10,
+    marginVertical: 15,
+    elevation: 3,
+    shadowColor: "#1e1e1e",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   headerContainer: {
     marginBottom: 15,
     alignItems: "center",
+    flexDirection: "row",
+    paddingHorizontal: 10,
+    padding: 2,
   },
   logoContainer: {
     flexDirection: "row",
-    // alignItems: "center",
-    // justifyContent: "center",
+    alignItems: "center",
     gap: 20,
   },
   image: {
@@ -111,11 +129,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginVertical: 5,
     padding: 10,
   },
   matchDate: {
     color: Colors.yellow,
+    fontFamily: "lato-bold",
   },
   teamLogo: {
     width: 30,
@@ -124,11 +142,28 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 10,
+    marginHorizontal: 5,
+    padding: 5,
   },
   paginationText: {
     color: Colors.yellow,
     fontSize: 16,
+  },
+
+  matchText: {
+    color: Colors.white,
+    fontFamily: "lato-bold",
+  },
+  scoreContainer: {
+    width: 50,
+    alignItems: "center",
+    marginLeft: 15,
+  },
+  teamNameContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
 });
 

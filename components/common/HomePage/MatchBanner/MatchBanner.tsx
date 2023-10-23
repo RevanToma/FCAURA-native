@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Image } from "react-native";
-import { Colors } from "../../../constants/Colors";
+import { Colors } from "../../../../constants/Colors";
 
 const MatchBanner = () => {
   return (
@@ -17,7 +17,7 @@ const MatchBanner = () => {
         </View>
         <View>
           <Image
-            source={require("./../../../assets/images/FCAURA-Logo.png")}
+            source={require("./../../../../assets/images/FCAURA-Logo.png")}
             style={styles.image}
           />
         </View>

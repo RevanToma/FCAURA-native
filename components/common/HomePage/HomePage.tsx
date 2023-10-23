@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import React from "react";
-import ImageChanger from "./ImageChanger";
-import { CarouselImageData } from "./ImageData";
-import MatchBanner from "./MatchBanner";
+import ImageChanger from "./MatchBanner/ImageChanger";
+import { CarouselImageData } from "./MatchBanner/ImageData";
+import MatchBanner from ".//MatchBanner/MatchBanner";
 import About from "./About";
 import LatestMatches from "./Matches/LatestMatches";
 import LatestMatchTable from "./Matches/LatestMatchTable";
