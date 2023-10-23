@@ -60,8 +60,7 @@ const styles = StyleSheet.create({
     color: Colors.error,
   },
   input: {
-    paddingVertical: 8,
-    paddingHorizontal: 6,
+    padding: 10,
     backgroundColor: Colors.white,
     borderRadius: 7,
     fontSize: 16,

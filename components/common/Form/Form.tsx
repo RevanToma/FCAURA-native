@@ -4,17 +4,34 @@ import Input from "./../Input/Input";
 import Button from "../Buttons/Button";
 import { Colors } from "../../../constants/Colors";
 
-const Form: React.FC<{
-  onSubmit: (email: string, password: string) => void;
-}> = ({ onSubmit }) => {
+interface FormProps {
+  onSubmit: (
+    email: string,
+    password: string,
+    firstName?: string,
+    lastName?: string
+  ) => void;
+  isSignUpMode?: boolean;
+  onToggleMode?: () => void;
+}
+
+const Form: React.FC<FormProps> = ({
+  onSubmit,
+  isSignUpMode = false,
+  onToggleMode = () => {},
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
-  const handleSignIn = () => {
-    onSubmit(email, password);
-  };
-  const handleSignUp = () => {
-    onSubmit(email, password);
+  const handleAction = () => {
+    if (isSignUpMode) {
+      onSubmit(email, password, firstName, lastName);
+    } else {
+      onSubmit(email, password);
+    }
   };
 
   return (
@@ -25,7 +42,7 @@ const Form: React.FC<{
         secure={false}
         onUpdateValue={setEmail}
         value={email}
-        isInvalid={false} // You can add email validation logic to determine this value
+        isInvalid={false}
       />
       <Input
         label="Password"
@@ -33,15 +50,27 @@ const Form: React.FC<{
         secure={true}
         onUpdateValue={setPassword}
         value={password}
-        isInvalid={false} // You can add password validation logic to determine this value
+        isInvalid={false}
       />
-      <Button onPress={handleSignIn}>Logga in</Button>
+      {isSignUpMode && (
+        <Input
+          label="Confirm Password"
+          keyboardType="default"
+          secure={true}
+          value={confirmPassword}
+          onUpdateValue={setConfirmPassword}
+          isInvalid={false}
+        />
+      )}
+      <Button onPress={handleAction}>
+        {isSignUpMode ? "Sign Up" : "Sign In"}
+      </Button>
       <Button
-        onPress={handleSignUp}
+        onPress={onToggleMode}
         style={styles.createAccount}
         textStyle={styles.textStyle}
       >
-        Skapa Konto
+        {isSignUpMode ? "Already have an account? Sign In" : "Create account"}
       </Button>
     </View>
   );
@@ -54,7 +83,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: Colors.alternative,
     marginVertical: 15,
-    width: "100%",
+    width: "90%",
     borderRadius: 5,
     alignItems: "center",
     shadowColor: "black",

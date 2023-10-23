@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: "source-sans",
-    fontSize: 20,
+    fontSize: 25,
     color: Colors.white,
     letterSpacing: 1,
   },

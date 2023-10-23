@@ -6,13 +6,31 @@ import {
   Text,
   View,
 } from "react-native";
-import React from "react";
+import { useContext, useState } from "react";
 import { Colors } from "../constants/Colors";
 import Form from "../components/common/Form/Form";
+import { createUser, logIn } from "../utils/auth";
+import { AuthContext } from "../store/authContext";
 
 const SignIn = () => {
-  const signIn = (email: string, password: string) => {
-    console.log("Email:", email, "Password:", password);
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const authCtx = useContext(AuthContext);
+
+  const signIn = async (email: string, password: string) => {
+    if (isSignUpMode) {
+      try {
+        const token = await createUser(email, password);
+        authCtx?.authenticate(token);
+      } catch (error: string | any) {
+        console.log(error);
+      }
+    } else {
+      const token = await logIn(email, password);
+      authCtx?.authenticate(token);
+    }
+  };
+  const toggleFormMode = () => {
+    setIsSignUpMode((prevMode) => !prevMode);
   };
   return (
     <View style={styles.root}>
@@ -22,12 +40,16 @@ const SignIn = () => {
             source={require("../assets/images/FCAURA-Logo.png")}
             style={styles.image}
           />
-          <Text style={styles.headerText}>Logga in med email och lösenord</Text>
+          <Text style={styles.headerText}>Sign in with email and password</Text>
+        </View>
+        <View style={styles.formView}>
+          <Form
+            onSubmit={signIn}
+            isSignUpMode={isSignUpMode}
+            onToggleMode={toggleFormMode}
+          />
         </View>
 
-        <View>
-          <Form onSubmit={signIn} />
-        </View>
         <View style={styles.footer}>
           <Text style={styles.footertxt}>eller logga in med</Text>
           <Pressable>
@@ -67,9 +89,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: "center",
-
     flex: 1,
-    gap: 20,
+
     marginVertical: 20,
 
     borderTopColor: "rgba(0,0,0,0.3)",
@@ -80,5 +101,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 20,
     fontWeight: "bold",
+    marginVertical: 35,
+  },
+  formView: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
