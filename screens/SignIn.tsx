@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -11,8 +12,23 @@ import { Colors } from "../constants/Colors";
 import Form from "../components/common/Form/Form";
 import { createUser, logIn } from "../utils/auth";
 import { AuthContext } from "../store/authContext";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const SignIn = () => {
+type RootStackParamList = {
+  SetupNavigator: { screen: string };
+  SetupProfile: undefined; // Add this if you want to be specific about navigating to SetupProfile
+  Tabs: undefined;
+  SignIn: undefined; // Assuming SignIn is part of this navigation hierarchy
+  // ... other route names and their parameters
+};
+type SignInScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "SignIn" // This is the name of the route where you are currently
+>;
+type SignInProps = {
+  navigation: SignInScreenNavigationProp;
+};
+const SignIn = ({ navigation }: any) => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const authCtx = useContext(AuthContext);
 
@@ -21,8 +37,14 @@ const SignIn = () => {
       try {
         const token = await createUser(email, password);
         authCtx?.authenticate(token);
+        navigation.navigate("SignedInNavigator", { screens: "SetupProfile" });
       } catch (error: string | any) {
-        console.log(error);
+        if (error.message === "EMAIL_EXISTS") {
+          Alert.alert("Email already in use, please chose another one");
+          return;
+        } else {
+          Alert.alert("An error occurred", error.message);
+        }
       }
     } else {
       const token = await logIn(email, password);

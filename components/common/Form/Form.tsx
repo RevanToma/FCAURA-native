@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import Input from "./../Input/Input";
 import Button from "../Buttons/Button";
 import { Colors } from "../../../constants/Colors";
 
 interface FormProps {
-  onSubmit: (
-    email: string,
-    password: string,
-    firstName?: string,
-    lastName?: string
-  ) => void;
+  onSubmit: (email: string, password: string) => void;
   isSignUpMode?: boolean;
   onToggleMode?: () => void;
 }
@@ -23,12 +18,19 @@ const Form: React.FC<FormProps> = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+
+  const isInvalid = email === "" || !email.includes("@") || password === "";
 
   const handleAction = () => {
     if (isSignUpMode) {
-      onSubmit(email, password, firstName, lastName);
+      if (password !== confirmPassword) {
+        Alert.alert("Passwords do not match");
+        return;
+      } else if (password.length < 6) {
+        Alert.alert("Password must be at least 6 characters long");
+        return;
+      }
+      onSubmit(email, password);
     } else {
       onSubmit(email, password);
     }
@@ -62,7 +64,7 @@ const Form: React.FC<FormProps> = ({
           isInvalid={false}
         />
       )}
-      <Button onPress={handleAction}>
+      <Button onPress={handleAction} disabled={isInvalid}>
         {isSignUpMode ? "Sign Up" : "Sign In"}
       </Button>
       <Button

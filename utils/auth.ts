@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 type Auth = {
   mode?: "signUp" | "signInWithPassword";
@@ -20,7 +20,7 @@ export const authenticate = async ({ mode, email, password }: Auth) => {
 
     return token;
   } catch (error: any) {
-    console.log(error.message);
+    throw new Error(error.response?.data.error.message || "UNKNOWN_ERROR");
   }
 };
 

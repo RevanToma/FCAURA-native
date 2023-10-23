@@ -8,8 +8,15 @@ type ButtonProps = {
   onPress: () => void;
   style?: object;
   textStyle?: object;
+  disabled?: boolean;
 };
-const Button: FC<ButtonProps> = ({ children, onPress, style, textStyle }) => {
+const Button: FC<ButtonProps> = ({
+  children,
+  onPress,
+  style,
+  textStyle,
+  disabled,
+}) => {
   return (
     <Pressable
       onPress={onPress}
@@ -17,7 +24,9 @@ const Button: FC<ButtonProps> = ({ children, onPress, style, textStyle }) => {
         styles.btnContainer,
         pressed && styles.pressed,
         style,
+        disabled && { backgroundColor: "#7FB781" },
       ]}
+      disabled={disabled}
     >
       <Text style={[styles.btnText, textStyle]}>{children}</Text>
     </Pressable>
