@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -12,33 +13,24 @@ import { Colors } from "../constants/Colors";
 import Form from "../components/common/Form/Form";
 import { createUser, logIn } from "../utils/auth";
 import { AuthContext } from "../store/authContext";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
 
-type RootStackParamList = {
-  SetupNavigator: { screen: string };
-  SetupProfile: undefined; // Add this if you want to be specific about navigating to SetupProfile
-  Tabs: undefined;
-  SignIn: undefined; // Assuming SignIn is part of this navigation hierarchy
-  // ... other route names and their parameters
-};
-type SignInScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "SignIn" // This is the name of the route where you are currently
->;
-type SignInProps = {
-  navigation: SignInScreenNavigationProp;
-};
-const SignIn = ({ navigation }: any) => {
+const SignIn = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const authCtx = useContext(AuthContext);
 
+  const [isLoading, setIsLoading] = useState(false);
+  // const navigation = useNavigation<any>();
   const signIn = async (email: string, password: string) => {
+    setIsLoading(true);
     if (isSignUpMode) {
       try {
         const token = await createUser(email, password);
         authCtx?.authenticate(token);
-        navigation.navigate("SignedInNavigator", { screens: "SetupProfile" });
+        setIsLoading(false);
       } catch (error: string | any) {
+        setIsLoading(false);
         if (error.message === "EMAIL_EXISTS") {
           Alert.alert("Email already in use, please chose another one");
           return;
@@ -46,31 +38,55 @@ const SignIn = ({ navigation }: any) => {
           Alert.alert("An error occurred", error.message);
         }
       }
+      setIsLoading(false);
     } else {
-      const token = await logIn(email, password);
-      authCtx?.authenticate(token);
+      try {
+        const token = await logIn(email, password);
+        authCtx?.authenticate(token);
+        setIsLoading(false);
+      } catch (error: any) {
+        setIsLoading(false);
+        Alert.alert("Login Error", error.message);
+      }
     }
   };
   const toggleFormMode = () => {
     setIsSignUpMode((prevMode) => !prevMode);
   };
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color={Colors.yellow}
+        style={{
+          justifyContent: "center",
+          height: "100%",
+          backgroundColor: Colors.alternative,
+        }}
+      />
+    );
+  }
   return (
     <View style={styles.root}>
       <ScrollView>
         <View style={styles.header}>
-          <Image
+          <Animated.Image
+            entering={FadeInUp.duration(1000).springify()}
             source={require("../assets/images/FCAURA-Logo.png")}
             style={styles.image}
           />
           <Text style={styles.headerText}>Sign in with email and password</Text>
         </View>
-        <View style={styles.formView}>
+        <Animated.View
+          entering={FadeInDown.duration(1000).springify()}
+          style={styles.formView}
+        >
           <Form
             onSubmit={signIn}
             isSignUpMode={isSignUpMode}
             onToggleMode={toggleFormMode}
           />
-        </View>
+        </Animated.View>
 
         <View style={styles.footer}>
           <Text style={styles.footertxt}>eller logga in med</Text>

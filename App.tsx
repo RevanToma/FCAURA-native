@@ -16,15 +16,52 @@ import SignIn from "./screens/SignIn";
 import AuthContextProvider, { AuthContext } from "./store/authContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SetupProfile from "./screens/SetupProfile";
+import SetupSkills from "./screens/SetupSkills";
+import Preview from "./screens/Preview";
+
+type NotAuthenticatedNavigatorProps = {
+  Home: undefined;
+  SignIn: undefined;
+  TeamMembers: undefined;
+  Chat?: undefined;
+  Settings?: undefined;
+};
+type SetupNavigatorProps = {
+  SetupProfile: undefined;
+  SetupSkills: undefined;
+  Preview: undefined;
+};
 
 SplashScreen.preventAutoHideAsync();
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<SetupNavigatorProps>();
+const Tab = createBottomTabNavigator<NotAuthenticatedNavigatorProps>();
 
 const SetupNavigator = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="SetupProfile" component={SetupProfile} />
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: Colors.primaryBackground },
+        headerTitleStyle: {
+          color: Colors.yellow,
+        },
+        headerTintColor: Colors.yellow,
+      }}
+    >
+      <Stack.Screen
+        name="SetupProfile"
+        component={SetupProfile}
+        options={{
+          headerTitle: "Setup Profile",
+        }}
+      />
+      <Stack.Screen
+        name="SetupSkills"
+        component={SetupSkills}
+        options={{
+          headerTitle: "Setup Skills",
+        }}
+      />
+      <Stack.Screen name="Preview" component={Preview} />
     </Stack.Navigator>
   );
 };
@@ -89,7 +126,7 @@ const NotAuthenticatedNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Sign In"
+        name="SignIn"
         component={SignIn}
         options={{
           tabBarIcon: ({ color, size }) => (

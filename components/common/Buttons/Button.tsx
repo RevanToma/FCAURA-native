@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 
 import { FC } from "react";
 import { Colors } from "../../../constants/Colors";
+import IconButton from "./IconButton";
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ type ButtonProps = {
   style?: object;
   textStyle?: object;
   disabled?: boolean;
+  icon?: string;
 };
 const Button: FC<ButtonProps> = ({
   children,
@@ -16,6 +18,7 @@ const Button: FC<ButtonProps> = ({
   style,
   textStyle,
   disabled,
+  icon,
 }) => {
   return (
     <Pressable
@@ -28,7 +31,10 @@ const Button: FC<ButtonProps> = ({
       ]}
       disabled={disabled}
     >
-      <Text style={[styles.btnText, textStyle]}>{children}</Text>
+      <View style={styles.btnContent}>
+        <Text style={[styles.btnText, textStyle]}>{children}</Text>
+        {icon && <IconButton icon={icon} color="white" size={35} />}
+      </View>
     </Pressable>
   );
 };
@@ -44,6 +50,7 @@ const styles = StyleSheet.create({
     margin: 15,
     width: 250,
     alignItems: "center",
+    justifyContent: "center",
   },
   pressed: {
     opacity: 0.7,
@@ -53,5 +60,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: Colors.white,
     letterSpacing: 1,
+  },
+  btnContent: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-around",
   },
 });
