@@ -35,22 +35,29 @@ const SkillPicker: FC<SkillPickerProps> = ({
           onSkillSelected(itemValue as string);
         }}
         style={{
-          backgroundColor: Colors.settingsBackground,
-          borderRadius: 5,
           height: 200,
           marginVertical: 10,
         }}
       >
-        <Picker.Item label="Select a skill" value="" color={Colors.yellow} />
+        <Picker.Item
+          label="Select a skill"
+          value=""
+          color={Colors.yellow}
+          style={{
+            backgroundColor: Colors.primaryBackground,
+          }}
+        />
         {predefinedSkills.map((skill, index) => (
           <Picker.Item
             key={index}
             label={skill}
             value={skill}
             color={Colors.yellow}
+            style={{ backgroundColor: Colors.alternative }}
           />
         ))}
       </Picker>
+
       <View style={styles.btns}>
         <Button
           onPress={() => {

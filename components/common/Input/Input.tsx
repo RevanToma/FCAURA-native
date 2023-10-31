@@ -75,7 +75,6 @@ export default Input;
 const styles = StyleSheet.create({
   inputContainer: {
     width: 350,
-
     padding: 20,
   },
   label: {
@@ -93,6 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: 7,
     fontSize: 16,
+    textAlignVertical: "top",
   },
   inputInvalid: {
     backgroundColor: Colors.error,
