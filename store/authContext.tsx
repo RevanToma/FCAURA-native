@@ -32,7 +32,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         setProfileSetup(true);
       }
     }
-
+    // AsyncStorage.removeItem("profileSetup");
     fetchProfileSetup();
   }, []);
 

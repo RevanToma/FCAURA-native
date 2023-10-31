@@ -7,14 +7,17 @@ import {
 } from "react-native";
 import { Colors } from "../../../constants/Colors";
 import { FC } from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 type inputProps = {
   label: string;
   keyboardType: KeyboardTypeOptions;
-  secure: boolean;
+  secure?: boolean;
   onUpdateValue: (text: string) => void;
   value: string | number;
-  isInvalid: boolean;
+  isInvalid?: boolean;
+  multiline?: boolean;
+  errorText?: string;
 };
 
 const Input: FC<inputProps> = ({
@@ -24,14 +27,35 @@ const Input: FC<inputProps> = ({
   onUpdateValue,
   value,
   isInvalid,
+  multiline,
+  errorText,
 }) => {
   return (
     <View style={styles.inputContainer}>
-      <Text style={[styles.label, isInvalid && styles.labelInvalid]}>
-        {label}
-      </Text>
+      {isInvalid ? (
+        <View style={styles.invalidView}>
+          <Text style={[styles.label, isInvalid && styles.labelInvalid]}>
+            {label}
+          </Text>
+          <Text style={styles.invalidLabelText}>
+            ({errorText ? errorText : ""})
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.validLabel}>
+          <Text style={styles.label}>{label}</Text>
+          <Ionicons
+            name="checkmark-circle-outline"
+            color={Colors.green}
+            size={25}
+          />
+        </View>
+      )}
+
       <TextInput
-        style={[styles.input, isInvalid && styles.inputInvalid]}
+        multiline={multiline}
+        numberOfLines={multiline ? 10 : 1}
+        style={styles.input}
         autoCapitalize="none"
         keyboardType={keyboardType}
         secureTextEntry={secure}
@@ -51,10 +75,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   label: {
-    color: "#A8A2A2",
+    color: Colors.yellow,
     marginBottom: 4,
     fontFamily: "source-sans",
     fontWeight: "bold",
+    fontSize: 20,
   },
   labelInvalid: {
     color: Colors.error,
@@ -67,5 +92,20 @@ const styles = StyleSheet.create({
   },
   inputInvalid: {
     backgroundColor: Colors.error,
+  },
+  validLabel: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+  },
+  invalidView: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  invalidLabelText: {
+    color: Colors.error,
   },
 });

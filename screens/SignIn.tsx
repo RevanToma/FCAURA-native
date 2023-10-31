@@ -14,7 +14,6 @@ import Form from "../components/common/Form/Form";
 import { createUser, logIn } from "../utils/auth";
 import { AuthContext } from "../store/authContext";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
-import { useNavigation } from "@react-navigation/native";
 
 const SignIn = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
