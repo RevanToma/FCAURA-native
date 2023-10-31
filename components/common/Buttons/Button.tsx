@@ -5,7 +5,7 @@ import { Colors } from "../../../constants/Colors";
 import IconButton from "./IconButton";
 
 type ButtonProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onPress: () => void;
   style?: object;
   textStyle?: object;

@@ -4,6 +4,7 @@ import {
   TextInput,
   StyleSheet,
   KeyboardTypeOptions,
+  ScrollView,
 } from "react-native";
 import { Colors } from "../../../constants/Colors";
 import { FC } from "react";
@@ -18,6 +19,7 @@ type inputProps = {
   isInvalid?: boolean;
   multiline?: boolean;
   errorText?: string;
+  placeholder?: string;
 };
 
 const Input: FC<inputProps> = ({
@@ -29,6 +31,7 @@ const Input: FC<inputProps> = ({
   isInvalid,
   multiline,
   errorText,
+  placeholder,
 }) => {
   return (
     <View style={styles.inputContainer}>
@@ -54,13 +57,14 @@ const Input: FC<inputProps> = ({
 
       <TextInput
         multiline={multiline}
-        numberOfLines={multiline ? 10 : 1}
+        numberOfLines={multiline ? 5 : 1}
         style={styles.input}
         autoCapitalize="none"
         keyboardType={keyboardType}
         secureTextEntry={secure}
         onChangeText={onUpdateValue}
         value={typeof value === "number" ? value.toString() : value}
+        placeholder={placeholder}
       />
     </View>
   );

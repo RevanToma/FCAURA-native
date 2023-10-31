@@ -5,10 +5,22 @@ type IconButtonProps = {
   icon: typeof Ionicons.defaultProps.name;
   color: string;
   size: number;
+  onPress?: () => void;
 };
-const IconButton: React.FC<IconButtonProps> = ({ icon, color, size }) => {
+const IconButton: React.FC<IconButtonProps> = ({
+  icon,
+  color,
+  size,
+  onPress,
+}) => {
   return (
-    <Ionicons name={icon} size={size} color={color} style={styles.iconStyle} />
+    <Ionicons
+      onPress={onPress}
+      name={icon}
+      size={size}
+      color={color}
+      style={styles.iconStyle}
+    />
   );
 };
 

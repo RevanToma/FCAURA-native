@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ReactNode, createContext, useEffect, useState } from "react";
-
+import { useMutation } from "@tanstack/react-query";
 type AuthContextType = {
   token: string;
   isAuthenticated: boolean;
@@ -25,20 +25,35 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const [profileSetup, setProfileSetup] = useState(false);
 
   useEffect(() => {
-    async function fetchProfileSetup() {
-      const storedProfileSetup = await AsyncStorage.getItem("profileSetup");
+    async function fetchInitialData() {
+      const token = await AsyncStorage.getItem("token");
+      if (token) setAuthToken(token);
 
-      if (storedProfileSetup === "true") {
-        setProfileSetup(true);
-      }
+      // const profileSetup = await AsyncStorage.getItem("profileSetup");
+      // await AsyncStorage.removeItem("profileSetup");
+      // setProfileSetup(profileSetup === "true");
     }
-    // AsyncStorage.removeItem("profileSetup");
-    fetchProfileSetup();
+    // setProfileSetup(true);
+    fetchInitialData();
   }, []);
 
+  const mutationAuthenticate = useMutation({
+    mutationFn: async (token: string) => {
+      await AsyncStorage.setItem("token", token);
+      return token;
+    },
+    onSuccess: (token: string) => {
+      setAuthToken(token);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   function authenticate(token: string) {
-    setAuthToken(token);
-    AsyncStorage.setItem("token", token);
+    // setAuthToken(token);
+    // AsyncStorage.setItem("token", token);
+    mutationAuthenticate.mutate(token);
   }
 
   function logout() {

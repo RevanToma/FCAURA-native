@@ -1,12 +1,15 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useContext, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
 import Button from "../components/common/Buttons/Button";
-import { AuthContext } from "../store/authContext";
+
 import { Colors } from "../constants/Colors";
 import Input from "../components/common/Input/Input";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import TeamMemberToggle from "../components/common/CheckBox/CheckBox";
-import { saveToFirebase } from "../firebase/firebase";
+import { useMutation } from "@tanstack/react-query";
+
+import { fetchProfileSetup, useProfileSetup } from "../utils/asyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type ProfileData = {
   bio: string;
@@ -14,12 +17,23 @@ export type ProfileData = {
   position: string;
   teamMember: boolean;
 };
+
 const SetupProfile = ({ navigation }: any) => {
+  const { profileSetup } = useProfileSetup();
+
+  const mutationProfileSetup = useMutation({
+    mutationFn: async (data: ProfileData) => {
+      await AsyncStorage.setItem("profileSetup", JSON.stringify(data));
+
+      return data;
+    },
+  });
+
   const [profileData, setProfileData] = useState<ProfileData>({
-    bio: "",
-    instagram: "",
-    position: "",
-    teamMember: false,
+    bio: profileSetup?.bio || "",
+    instagram: profileSetup?.instagram || "",
+    position: profileSetup?.position || "",
+    teamMember: profileSetup?.teamMember || false,
   });
   const isValidBio = profileData.bio.length >= 10;
   const isValidPosition = profileData.position.length >= 3;
@@ -34,12 +48,21 @@ const SetupProfile = ({ navigation }: any) => {
     }));
   };
 
-  const handlePorfileSetup = () => {
-    AsyncStorage.setItem("profileSetup", JSON.stringify(profileData));
+  const handleProfileSetup = async () => {
+    try {
+      const currentProfileData = await fetchProfileSetup();
 
-    navigation.navigate("SetupSkills");
-
-    // saveToFirebase(authCtx?.token!, profileData);
+      const mergedData = {
+        ...currentProfileData, // This will spread the existing data
+        ...profileData, // This will spread and possibly overwrite with the new data
+        skills: currentProfileData?.skills || [], // This will ensure that skills are not overwritten
+      };
+      mutationProfileSetup.mutate(mergedData);
+      console.log("profile data", mergedData);
+      navigation.navigate("SetupSkills");
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <View style={styles.root}>
@@ -72,7 +95,7 @@ const SetupProfile = ({ navigation }: any) => {
         />
       </View>
 
-      <Button onPress={handlePorfileSetup} icon="arrow-forward-outline">
+      <Button onPress={handleProfileSetup} icon="arrow-forward-outline">
         Add Skills
       </Button>
     </View>

@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SetupProfile from "./screens/SetupProfile";
 import SetupSkills from "./screens/SetupSkills";
 import Preview from "./screens/Preview";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 type NotAuthenticatedNavigatorProps = {
   Home: undefined;
@@ -31,6 +32,8 @@ type SetupNavigatorProps = {
   SetupSkills: undefined;
   Preview: undefined;
 };
+
+const queryClient = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator<SetupNavigatorProps>();
@@ -275,11 +278,13 @@ export default function App() {
   }
 
   return (
-    <AuthContextProvider>
-      <StatusBar style="light" />
-      <NavigationContainer>
-        <MainNavigator />
-      </NavigationContainer>
-    </AuthContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>
+        <StatusBar style="light" />
+        <NavigationContainer>
+          <MainNavigator />
+        </NavigationContainer>
+      </AuthContextProvider>
+    </QueryClientProvider>
   );
 }
