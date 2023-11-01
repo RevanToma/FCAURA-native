@@ -17,8 +17,11 @@ export const authenticate = async ({ mode, email, password }: Auth) => {
       }
     );
     const token = response.data.idToken;
+    const uid = response.data.localId;
 
-    return token;
+    console.log("from auth", uid);
+
+    return { token, uid };
   } catch (error: any) {
     throw new Error(error.response?.data.error.message || "UNKNOWN_ERROR");
   }

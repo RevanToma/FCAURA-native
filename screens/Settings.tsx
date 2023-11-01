@@ -1,14 +1,16 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useContext } from "react";
+
 import { Colors } from "../constants/Colors";
 import Button from "../components/common/Buttons/Button";
-import { AuthContext } from "../store/authContext";
+
+import { useAppDispatch } from "../utils/hooks/useDispatch";
+import { logOutUser } from "../store/user/userSlice";
 
 const Settings = () => {
-  const authCtx = useContext(AuthContext);
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
-    authCtx?.logout();
+    dispatch(logOutUser());
   };
   return (
     <View style={styles.root}>

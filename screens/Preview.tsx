@@ -8,18 +8,18 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { useContext, useState } from "react";
-import { useUserProfile } from "../utils/hooks/useUserProfile";
+import { useState } from "react";
 import { Colors } from "../constants/Colors";
 import Button from "../components/common/Buttons/Button";
-import { AuthContext } from "../store/authContext";
+
 import { saveToFirebase } from "../firebase/firebase";
+import { useSelector } from "react-redux";
+import { selectUser } from "../store/user/userSelectors";
 
 const Preview = ({ navigation }: any) => {
-  const { data: profile, isLoading, isError } = useUserProfile();
+  const user = useSelector(selectUser);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const authCtx = useContext(AuthContext);
   const openURL = (url: string) => {
     if (!url || url.trim() === "") {
       console.log("Instagram username is empty or not provided");
@@ -41,17 +41,14 @@ const Preview = ({ navigation }: any) => {
     setIsSubmitting(true);
 
     try {
-      if (profile.teamMember) {
-        await saveToFirebase(authCtx?.token!, profile);
-        navigation.navigate("Review");
-        setIsSubmitting(false);
-        return;
-      }
-      await saveToFirebase(authCtx?.token!, profile);
-      authCtx?.completeProfileSetup();
+      await saveToFirebase(user.uid!, user);
+      navigation.navigate("Review");
+      setIsSubmitting(false);
+      return;
     } catch (error) {
       console.log(error);
     }
+
     setIsSubmitting(false);
   };
   return (
@@ -79,12 +76,12 @@ const Preview = ({ navigation }: any) => {
                   style={styles.avatar}
                 />
               </View>
-              <Text style={[styles.text, styles.nameTxt]}>{profile.name}</Text>
+              <Text style={[styles.text, styles.nameTxt]}>{user.name}</Text>
               <Text style={[styles.text, styles.positionTxt]}>
-                {profile.position}
+                {user.position}
               </Text>
-              <Text style={[styles.text, styles.bioTxt]}> {profile.bio}</Text>
-              <TouchableOpacity onPress={() => openURL(profile.instagram)}>
+              <Text style={[styles.text, styles.bioTxt]}> {user.bio}</Text>
+              <TouchableOpacity onPress={() => openURL(user.instagram)}>
                 <Image
                   source={require("./../assets/images/instagram.png")}
                   style={{ width: 50, marginTop: 10 }}
@@ -92,7 +89,7 @@ const Preview = ({ navigation }: any) => {
               </TouchableOpacity>
 
               <View style={styles.skillListContainer}>
-                {profile.skills.map((skill: string, index: number) => (
+                {user.skills.map((skill: string, index: number) => (
                   <View key={index} style={styles.skillContainer}>
                     <Text style={styles.skillText}>{skill}</Text>
                   </View>

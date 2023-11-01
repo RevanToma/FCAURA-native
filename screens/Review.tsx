@@ -6,13 +6,14 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import Button from "../components/common/Buttons/Button";
 import { Colors } from "../constants/Colors";
-import { AuthContext } from "../store/authContext";
+import { completedProfileSetup } from "../store/user/userSlice";
+import { useAppDispatch } from "../utils/hooks/useDispatch";
 
 const Review = ({ navigation }: any) => {
-  const authCtx = useContext(AuthContext);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     navigation.setOptions({
       headerBackVisible: false,
@@ -20,7 +21,7 @@ const Review = ({ navigation }: any) => {
   }, [navigation]);
 
   const handleButton = () => {
-    authCtx?.completeProfileSetup();
+    dispatch(completedProfileSetup());
   };
   return (
     <ScrollView style={styles.root}>

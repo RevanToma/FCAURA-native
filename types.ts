@@ -22,3 +22,18 @@ export type MainStackParamList = {
   SetupNavigator: undefined;
   SignedInNavigator: undefined;
 };
+
+export type isTeamMemberStatus = "Pending" | "Approved" | "Rejected";
+
+export type User = {
+  name: string;
+  bio: string;
+  instagram: string;
+  teamMemberStatus: "Pending" | "Approved" | "Rejected";
+  teamMember: boolean;
+  position: string;
+  skills: string[];
+  completedProfileSetup: boolean;
+  token: null;
+  uid: null;
+};

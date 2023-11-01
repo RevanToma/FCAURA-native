@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -13,18 +13,21 @@ import IconButton from "./components/common/Buttons/IconButton";
 import { Colors } from "./constants/Colors";
 import { Platform, Image, ActivityIndicator } from "react-native";
 import SignIn from "./screens/SignIn";
-import AuthContextProvider, { AuthContext } from "./store/authContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import SetupProfile from "./screens/SetupProfile";
 import SetupSkills from "./screens/SetupSkills";
 import Preview from "./screens/Preview";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Review from "./screens/Review";
-import { fetchProfileSetup } from "./utils/asyncStorage";
+import { useAppDispatch } from "./utils/hooks/useDispatch";
+
+import { Provider } from "react-redux";
+import store, { persistor } from "./store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { useSelector } from "react-redux";
+import { selectUser, userSlice } from "./store/user/userSelectors";
+import { fetchUserFromFirebase } from "./firebase/firebase";
+import { fetchUser } from "./store/user/userSlice";
 
 type NotAuthenticatedNavigatorProps = {
   Home: undefined;
@@ -156,20 +159,18 @@ const NotAuthenticatedNavigator = () => {
 };
 
 const SignedInNavigator = () => {
-  const [teamMember, setTeamMember] = useState(false);
+  const currentUser = useSelector(selectUser);
+  const [memberStatus, setMemberStatus] = useState("");
 
   useEffect(() => {
-    const loadData = async () => {
-      const data = await AsyncStorage.getItem("profileData");
-
-      if (data !== null) {
-        const parsedData = JSON.parse(data);
-
-        setTeamMember(parsedData.teamMember);
-      }
+    const fetchUser = async () => {
+      const user = await fetchUserFromFirebase(currentUser.uid!);
+      setMemberStatus(user?.teamMemberStatus);
     };
-    loadData();
+
+    fetchUser();
   }, []);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -228,8 +229,7 @@ const SignedInNavigator = () => {
           ),
         }}
       />
-
-      {teamMember && (
+      {memberStatus === "Approved" && (
         <Tab.Screen
           name="Chat"
           component={Chat}
@@ -258,35 +258,24 @@ const SignedInNavigator = () => {
   );
 };
 const MainNavigator = () => {
-  const authCtx = useContext(AuthContext);
-  const isProfileSetup = authCtx?.isProfileSetup;
-  const [isLoading, setIsLoading] = useState(true);
+  const { isSignedIn, user } = useSelector(userSlice);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    async function fetchToken() {
-      const storedToken = await AsyncStorage.getItem("token");
-
-      if (storedToken) {
-        authCtx?.authenticate(storedToken);
-        // authCtx?.logout();
-      }
-      setIsLoading(false);
+    if (user.uid) {
+      dispatch(fetchUser(user.uid));
     }
-
-    fetchToken();
   }, []);
+
   if (isLoading) {
     return <ActivityIndicator size="large" color={Colors.yellow} />;
   }
-  if (authCtx?.isAuthenticated && !isProfileSetup) {
-    return <SetupNavigator />;
-  }
 
-  if (authCtx?.isAuthenticated) {
-    if (!isProfileSetup) {
-      return <SetupNavigator />;
-    }
+  if (isSignedIn && user?.completedProfileSetup) {
     return <SignedInNavigator />;
+  } else if (isSignedIn && !user?.completedProfileSetup) {
+    return <SetupNavigator />;
   } else {
     return <NotAuthenticatedNavigator />;
   }
@@ -299,6 +288,7 @@ export default function App() {
     "source-sans": require("./assets/fonts/SourceSans3-Medium.ttf"),
     "rubik-microbe": require("./assets/fonts/RubikMicrobe-Regular.ttf"),
   });
+
   useEffect(() => {
     async function hideSplash() {
       if (fontsLoaded) {
@@ -314,13 +304,15 @@ export default function App() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthContextProvider>
-        <StatusBar style="light" />
-        <NavigationContainer>
-          <MainNavigator />
-        </NavigationContainer>
-      </AuthContextProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <StatusBar style="light" />
+          <NavigationContainer>
+            <MainNavigator />
+          </NavigationContainer>
+        </QueryClientProvider>
+      </PersistGate>
+    </Provider>
   );
 }

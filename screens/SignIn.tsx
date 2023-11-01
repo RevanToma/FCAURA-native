@@ -8,25 +8,26 @@ import {
   Text,
   View,
 } from "react-native";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Colors } from "../constants/Colors";
 import Form from "../components/common/Form/Form";
-import { createUser, logIn } from "../utils/auth";
-import { AuthContext } from "../store/authContext";
+
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { useAppDispatch } from "../utils/hooks/useDispatch";
+import { signInUser, signUpUser } from "../store/user/userSlice";
 
 const SignIn = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
-  const authCtx = useContext(AuthContext);
+
+  const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
-  // const navigation = useNavigation<any>();
+
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     if (isSignUpMode) {
       try {
-        const token = await createUser(email, password);
-        authCtx?.authenticate(token);
+        await dispatch(signUpUser({ email, password }));
         setIsLoading(false);
       } catch (error: string | any) {
         setIsLoading(false);
@@ -40,8 +41,7 @@ const SignIn = () => {
       setIsLoading(false);
     } else {
       try {
-        const token = await logIn(email, password);
-        authCtx?.authenticate(token);
+        await dispatch(signInUser({ email, password }));
         setIsLoading(false);
       } catch (error: any) {
         setIsLoading(false);

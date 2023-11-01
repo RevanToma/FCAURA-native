@@ -6,10 +6,11 @@ import { Colors } from "../constants/Colors";
 import Input from "../components/common/Input/Input";
 
 import TeamMemberToggle from "../components/common/CheckBox/CheckBox";
-import { useMutation } from "@tanstack/react-query";
 
-import { fetchProfileSetup, useProfileSetup } from "../utils/asyncStorage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
+import { selectUser } from "../store/user/userSelectors";
+import { useAppDispatch } from "../utils/hooks/useDispatch";
+import { logOutUser, updateUserProfile } from "../store/user/userSlice";
 
 export type ProfileData = {
   bio: string;
@@ -17,25 +18,18 @@ export type ProfileData = {
   position: string;
   teamMember: boolean;
   name: string;
+  completedProfileSetup?: boolean;
 };
 
 const SetupProfile = ({ navigation }: any) => {
-  const { profileSetup } = useProfileSetup();
-
-  const mutationProfileSetup = useMutation({
-    mutationFn: async (data: ProfileData) => {
-      await AsyncStorage.setItem("profileData", JSON.stringify(data));
-
-      return data;
-    },
-  });
-
+  const user = useSelector(selectUser);
+  const dispatch = useAppDispatch();
   const [profileData, setProfileData] = useState<ProfileData>({
-    bio: profileSetup?.bio || "",
-    instagram: profileSetup?.instagram || "",
-    position: profileSetup?.position || "",
-    teamMember: profileSetup?.teamMember || false,
-    name: profileSetup?.name || "",
+    bio: user?.bio || "",
+    instagram: user?.instagram || "",
+    position: user?.position || "",
+    teamMember: user?.teamMember || false,
+    name: user?.name || "",
   });
   const isValidBio = profileData.bio.length >= 10;
   const isValidPosition = profileData.position.length >= 3;
@@ -55,21 +49,15 @@ const SetupProfile = ({ navigation }: any) => {
 
   const handleProfileSetup = async () => {
     try {
-      const currentProfileData = await fetchProfileSetup();
-
-      const mergedData = {
-        ...currentProfileData, // This will spread the existing data
-        ...profileData, // This will spread and possibly overwrite with the new data
-        skills: currentProfileData?.skills || [], // This will ensure that skills are not overwritten
-      };
-      mutationProfileSetup.mutate(mergedData);
-
-      console.log(mergedData);
-
+      await dispatch(updateUserProfile(profileData));
       navigation.navigate("SetupSkills");
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(logOutUser());
   };
 
   return (
@@ -116,6 +104,7 @@ const SetupProfile = ({ navigation }: any) => {
         >
           Add Skills
         </Button>
+        <Button onPress={handleLogout}>Logout</Button>
       </View>
     </ScrollView>
   );

@@ -1,7 +1,6 @@
 import { AppRegistry } from "react-native";
 import App from "../App";
-import { AuthContext } from "../store/authContext";
-import { useContext } from "react";
+
 import { ProfileData } from "../screens/SetupProfile";
 import { initializeApp } from "firebase/app";
 import {
@@ -9,6 +8,7 @@ import {
   arrayUnion,
   collection,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   query,
@@ -30,28 +30,45 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export const saveToFirebase = async (
+export const saveToFirebase = async (uid: string, profileData: ProfileData) => {
+  try {
+    const userRef = doc(collection(db, "users"), uid); // Use the UID as the document ID
+    await setDoc(userRef, profileData); // Will create a new doc or overwrite an existing one with the same ID
+    return uid;
+  } catch (error: any) {
+    console.error("Error saving document: ", error);
+    return null;
+  }
+};
+
+export const updateFirebaseUser = async (
   userId: string,
   profileData: ProfileData
 ) => {
-  if (!userId) return; // handle error
-
-  const usersCollection = collection(db, "users");
-  const q = query(usersCollection); // Add any constraints if needed
-
-  const querySnapshot = await getDocs(q);
+  const userRef = doc(db, "users", userId);
 
   try {
-    const randomDocId = querySnapshot.docs[0].id; // Assuming there's only one document with a random ID
-    const userRef = doc(db, "users", randomDocId);
-
-    const userObject = {
-      id: Date.now(),
-      ...profileData,
-    };
-
-    await updateDoc(userRef, { users: arrayUnion(userObject) });
+    // Update the existing document
+    await updateDoc(userRef, profileData);
   } catch (error: any) {
-    console.log(error);
+    console.error("Error updating document: ", error);
+    // Handle error appropriately.
+  }
+};
+
+export const fetchUserFromFirebase = async (uid: string) => {
+  try {
+    const userRef = doc(db, "users", uid); // Use the UID to reference the document
+    const docSnap = await getDoc(userRef);
+
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error: any) {
+    console.error("Error fetching document: ", error);
+    return null;
   }
 };
