@@ -7,51 +7,45 @@ import {
   StyleSheet,
   Text,
   View,
+  TextInput,
 } from "react-native";
 import { useState } from "react";
 import { Colors } from "../constants/Colors";
-import Form from "../components/common/Form/Form";
 
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
 import { signInUser, signUpUser } from "../store/user/userSlice";
+import { useForm, Controller } from "react-hook-form";
+import Button from "../components/common/Buttons/Button";
 
-const SignIn = () => {
-  const [isSignUpMode, setIsSignUpMode] = useState(false);
+type FormData = {
+  email: string;
+  password: string;
+};
+
+const SignIn = ({ navigation }: any) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<FormData>();
 
   const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const signIn = async (email: string, password: string) => {
+  const onSubmit = async (data: FormData) => {
     setIsLoading(true);
-    if (isSignUpMode) {
-      try {
-        await dispatch(signUpUser({ email, password }));
-        setIsLoading(false);
-      } catch (error: string | any) {
-        setIsLoading(false);
-        if (error.message === "EMAIL_EXISTS") {
-          Alert.alert("Email already in use, please chose another one");
-          return;
-        } else {
-          Alert.alert("An error occurred", error.message);
-        }
-      }
+    const { email, password } = data;
+    try {
+      await dispatch(signInUser({ email, password }));
+    } catch (error: any) {
+      Alert.alert("Login Error", error.message);
+    } finally {
       setIsLoading(false);
-    } else {
-      try {
-        await dispatch(signInUser({ email, password }));
-        setIsLoading(false);
-      } catch (error: any) {
-        setIsLoading(false);
-        Alert.alert("Login Error", error.message);
-      }
     }
   };
-  const toggleFormMode = () => {
-    setIsSignUpMode((prevMode) => !prevMode);
-  };
+
   if (isLoading) {
     return (
       <ActivityIndicator
@@ -80,12 +74,65 @@ const SignIn = () => {
           entering={FadeInDown.duration(1000).springify()}
           style={styles.formView}
         >
-          <Form
-            onSubmit={signIn}
-            isSignUpMode={isSignUpMode}
-            onToggleMode={toggleFormMode}
-          />
+          <View style={{ width: "100%", alignItems: "center", marginTop: 20 }}>
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email.message}</Text>
+            )}
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <TextInput
+                    style={styles.input}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Email"
+                    autoCapitalize="none"
+                    keyboardType="email-address" // To show email keyboard
+                  />
+                </View>
+              )}
+              name="email"
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                  message: "Not a valid email",
+                },
+              }}
+            />
+
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password.message}</Text>
+            )}
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Password"
+                  secureTextEntry
+                  autoCapitalize="none"
+                />
+              )}
+              name="password"
+              rules={{ required: "Password is required" }}
+            />
+          </View>
+
+          <Button onPress={handleSubmit(onSubmit)}>Sign in</Button>
         </Animated.View>
+        <Text
+          onPress={() => navigation.navigate("SignUp")}
+          style={[styles.footertxt, { textAlign: "center", letterSpacing: 1 }]}
+        >
+          Don't have an account?
+          <Text style={{ color: Colors.yellow }}> Sign up!</Text>
+        </Text>
 
         <View style={styles.footer}>
           <Text style={styles.footertxt}>eller logga in med</Text>
@@ -127,9 +174,7 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: "center",
     flex: 1,
-
     marginVertical: 20,
-
     borderTopColor: "rgba(0,0,0,0.3)",
     borderTopWidth: 2,
   },
@@ -144,5 +189,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  input: {
+    padding: 10,
+    backgroundColor: Colors.white,
+    borderRadius: 7,
+    fontSize: 16,
+    textAlignVertical: "top",
+    width: "80%",
+    marginVertical: 10,
+  },
+  errorText: {
+    color: Colors.error,
   },
 });

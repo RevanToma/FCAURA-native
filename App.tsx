@@ -28,6 +28,7 @@ import { useSelector } from "react-redux";
 import { selectUser, userSlice } from "./store/user/userSelectors";
 import { fetchUserFromFirebase } from "./firebase/firebase";
 import { fetchUser } from "./store/user/userSlice";
+import SignUp from "./screens/SignUp";
 
 type NotAuthenticatedNavigatorProps = {
   Home: undefined;
@@ -35,6 +36,7 @@ type NotAuthenticatedNavigatorProps = {
   TeamMembers: undefined;
   Chat?: undefined;
   Settings?: undefined;
+  Auth?: undefined;
 };
 type SetupNavigatorProps = {
   SetupProfile: undefined;
@@ -48,7 +50,19 @@ const queryClient = new QueryClient();
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator<SetupNavigatorProps>();
 const Tab = createBottomTabNavigator<NotAuthenticatedNavigatorProps>();
+const AuthStack = createNativeStackNavigator();
 
+const AuthFlowNavigator = () => {
+  return (
+    <AuthStack.Navigator
+      initialRouteName="SignIn"
+      screenOptions={{ headerShown: false }}
+    >
+      <AuthStack.Screen name="SignIn" component={SignIn} />
+      <AuthStack.Screen name="SignUp" component={SignUp} />
+    </AuthStack.Navigator>
+  );
+};
 const SetupNavigator = () => {
   return (
     <Stack.Navigator
@@ -145,10 +159,12 @@ const NotAuthenticatedNavigator = () => {
           ),
         }}
       />
+
       <Tab.Screen
-        name="SignIn"
-        component={SignIn}
+        name="Auth"
+        component={AuthFlowNavigator}
         options={{
+          tabBarLabel: "SignIn", // or 'Auth' or whatever you want to label this tab
           tabBarIcon: ({ color, size }) => (
             <IconButton color={color} size={size} icon="log-in" />
           ),
@@ -160,16 +176,6 @@ const NotAuthenticatedNavigator = () => {
 
 const SignedInNavigator = () => {
   const currentUser = useSelector(selectUser);
-  const [memberStatus, setMemberStatus] = useState("");
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await fetchUserFromFirebase(currentUser.uid!);
-      setMemberStatus(user?.teamMemberStatus);
-    };
-
-    fetchUser();
-  }, []);
 
   return (
     <Tab.Navigator
@@ -229,7 +235,7 @@ const SignedInNavigator = () => {
           ),
         }}
       />
-      {memberStatus === "Approved" && (
+      {currentUser.teamMemberStatus === "Approved" && (
         <Tab.Screen
           name="Chat"
           component={Chat}
@@ -260,13 +266,27 @@ const SignedInNavigator = () => {
 const MainNavigator = () => {
   const { isSignedIn, user } = useSelector(userSlice);
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useAppDispatch();
 
+  const dispatch = useAppDispatch();
   useEffect(() => {
-    if (user.uid) {
-      dispatch(fetchUser(user.uid));
+    const fetchCurrentUser = async () => {
+      if (isSignedIn && user?.uid) {
+        try {
+          await dispatch(fetchUser(user.uid)).unwrap();
+        } catch (error) {
+          console.error("Failed to fetch user:", error);
+        }
+
+        setIsLoading(false);
+      }
+    };
+
+    if (isSignedIn && user?.uid) {
+      fetchCurrentUser();
+    } else {
+      setIsLoading(false);
     }
-  }, []);
+  }, [isSignedIn, user?.uid, dispatch]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" color={Colors.yellow} />;
