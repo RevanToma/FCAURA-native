@@ -42,6 +42,7 @@ const Preview = ({ navigation }: any) => {
 
     try {
       if (profile.teamMember) {
+        await saveToFirebase(authCtx?.token!, profile);
         navigation.navigate("Review");
         setIsSubmitting(false);
         return;

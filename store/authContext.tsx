@@ -29,7 +29,8 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       const token = await AsyncStorage.getItem("token");
       if (token) setAuthToken(token);
 
-      // const profileSetup = await AsyncStorage.getItem("profileSetup");
+      const profileSetup = await AsyncStorage.getItem("profileSetup");
+
       // await AsyncStorage.removeItem("profileSetup");
       // setProfileSetup(profileSetup === "true");
     }

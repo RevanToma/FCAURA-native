@@ -18,8 +18,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SetupProfile from "./screens/SetupProfile";
 import SetupSkills from "./screens/SetupSkills";
 import Preview from "./screens/Preview";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 import Review from "./screens/Review";
+import { fetchProfileSetup } from "./utils/asyncStorage";
 
 type NotAuthenticatedNavigatorProps = {
   Home: undefined;
@@ -151,6 +156,20 @@ const NotAuthenticatedNavigator = () => {
 };
 
 const SignedInNavigator = () => {
+  const [teamMember, setTeamMember] = useState(false);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await AsyncStorage.getItem("profileData");
+
+      if (data !== null) {
+        const parsedData = JSON.parse(data);
+        console.log("FROM AUTH", parsedData);
+        setTeamMember(parsedData.teamMember);
+      }
+    };
+    loadData();
+  }, []);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -209,15 +228,23 @@ const SignedInNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name="Chat"
-        component={Chat}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <IconButton color={color} size={size} icon="chatbubble-ellipses" />
-          ),
-        }}
-      />
+
+      {teamMember && (
+        <Tab.Screen
+          name="Chat"
+          component={Chat}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <IconButton
+                color={color}
+                size={size}
+                icon="chatbubble-ellipses"
+              />
+            ),
+          }}
+        />
+      )}
+
       <Tab.Screen
         name="Settings"
         component={Settings}

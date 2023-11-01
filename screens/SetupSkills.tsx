@@ -16,6 +16,7 @@ const SetupSkills = ({ navigation }: any) => {
     queryFn: fetchProfileSetup,
   });
 
+  console.log(query.data);
   const mutation = useMutation({
     mutationFn: updateProfileSetup,
     onSuccess: () => {
@@ -60,6 +61,7 @@ const SetupSkills = ({ navigation }: any) => {
       };
 
       mutation.mutate(updatedProfileData);
+      updateProfileSetup(updatedProfileData);
 
       if (isTeammember) {
         navigation.navigate("Preview");

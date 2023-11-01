@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 
 export const fetchProfileSetup = async () => {
-  const storedProfileSetup = await AsyncStorage.getItem("profileSetup");
+  const storedProfileSetup = await AsyncStorage.getItem("profileData");
 
   return storedProfileSetup ? JSON.parse(storedProfileSetup) : null;
 };
@@ -22,7 +22,7 @@ export const useProfileSetup = () => {
   }, []);
 
   const saveProfileSetup = async (data: object) => {
-    await AsyncStorage.setItem("profileSetup", JSON.stringify(data));
+    await AsyncStorage.setItem("profileData", JSON.stringify(data));
 
     setProfileSetup(data); // Update the local state after saving
   };
@@ -34,7 +34,7 @@ export const useProfileSetup = () => {
 };
 
 export const updateProfileSetup = async (data: object) => {
-  await AsyncStorage.setItem("profileSetup", JSON.stringify(data));
+  await AsyncStorage.setItem("profileData", JSON.stringify(data));
 
   return data;
 };

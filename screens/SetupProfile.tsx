@@ -24,7 +24,7 @@ const SetupProfile = ({ navigation }: any) => {
 
   const mutationProfileSetup = useMutation({
     mutationFn: async (data: ProfileData) => {
-      await AsyncStorage.setItem("profileSetup", JSON.stringify(data));
+      await AsyncStorage.setItem("profileData", JSON.stringify(data));
 
       return data;
     },
