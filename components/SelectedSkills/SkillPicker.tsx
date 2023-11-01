@@ -1,7 +1,7 @@
 // SkillPicker.tsx
 import { Picker } from "@react-native-picker/picker";
 import React, { FC, useState } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { Platform, StyleSheet, TextInput, View } from "react-native";
 import { Colors } from "../../constants/Colors";
 import Button from "../common/Buttons/Button";
 
@@ -35,8 +35,7 @@ const SkillPicker: FC<SkillPickerProps> = ({
           onSkillSelected(itemValue as string);
         }}
         style={{
-          height: 200,
-          marginVertical: 10,
+          height: Platform.OS === "ios" ? 200 : 100,
         }}
       >
         <Picker.Item
@@ -79,13 +78,12 @@ const SkillPicker: FC<SkillPickerProps> = ({
 
 const styles = StyleSheet.create({
   btns: {
-    marginVertical: 10,
     alignItems: "center",
   },
   input: {
     borderRadius: 5,
     padding: 15,
-    marginVertical: 10,
+    marginTop: 10,
     backgroundColor: Colors.white,
     color: Colors.alternative,
   },

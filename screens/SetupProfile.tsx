@@ -41,6 +41,8 @@ const SetupProfile = ({ navigation }: any) => {
   const isValidPosition = profileData.position.length >= 3;
   const isValidName = profileData.name.length >= 3;
 
+  const isValid = isValidBio && isValidPosition && isValidName;
+
   const handleProfileData = (
     field: keyof ProfileData,
     value: string | boolean
@@ -67,6 +69,7 @@ const SetupProfile = ({ navigation }: any) => {
       console.log(error);
     }
   };
+
   return (
     <ScrollView style={styles.root}>
       <View style={{ alignItems: "center" }}>
@@ -104,7 +107,11 @@ const SetupProfile = ({ navigation }: any) => {
         <TeamMemberToggle
           onToggle={(status) => handleProfileData("teamMember", status)}
         />
-        <Button onPress={handleProfileSetup} icon="arrow-forward-outline">
+        <Button
+          onPress={handleProfileSetup}
+          icon="arrow-forward-outline"
+          disabled={!isValid}
+        >
           Add Skills
         </Button>
       </View>

@@ -19,6 +19,7 @@ import SetupProfile from "./screens/SetupProfile";
 import SetupSkills from "./screens/SetupSkills";
 import Preview from "./screens/Preview";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Review from "./screens/Review";
 
 type NotAuthenticatedNavigatorProps = {
   Home: undefined;
@@ -31,6 +32,7 @@ type SetupNavigatorProps = {
   SetupProfile: undefined;
   SetupSkills: undefined;
   Preview: undefined;
+  Review: undefined;
 };
 
 const queryClient = new QueryClient();
@@ -62,6 +64,13 @@ const SetupNavigator = () => {
         component={SetupSkills}
         options={{
           headerTitle: "Setup Skills",
+        }}
+      />
+      <Stack.Screen
+        name="Review"
+        component={Review}
+        options={{
+          headerTitle: "Review",
         }}
       />
       <Stack.Screen name="Preview" component={Preview} />

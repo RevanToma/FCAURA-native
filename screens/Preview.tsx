@@ -6,15 +6,20 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import { useContext, useState } from "react";
 import { useUserProfile } from "../utils/hooks/useUserProfile";
 import { Colors } from "../constants/Colors";
 import Button from "../components/common/Buttons/Button";
+import { AuthContext } from "../store/authContext";
+import { saveToFirebase } from "../firebase/firebase";
 
-const Preview = () => {
+const Preview = ({ navigation }: any) => {
   const { data: profile, isLoading, isError } = useUserProfile();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const authCtx = useContext(AuthContext);
   const openURL = (url: string) => {
     if (!url || url.trim() === "") {
       console.log("Instagram username is empty or not provided");
@@ -32,8 +37,21 @@ const Preview = () => {
     });
   };
 
-  const handleSubmit = () => {
-    console.log("submit");
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    try {
+      if (profile.teamMember) {
+        navigation.navigate("Review");
+        setIsSubmitting(false);
+        return;
+      }
+      await saveToFirebase(authCtx?.token!, profile);
+      authCtx?.completeProfileSetup();
+    } catch (error) {
+      console.log(error);
+    }
+    setIsSubmitting(false);
   };
   return (
     <ScrollView style={styles.root}>
@@ -46,7 +64,12 @@ const Preview = () => {
             source={require("./../assets/images/FCAURA-Logo.png")}
             style={styles.logo}
           />
-
+          <View style={styles.avatarContainer}>
+            <Image
+              source={require("./../assets/images/avatar.jpg")}
+              style={styles.avatar}
+            />
+          </View>
           <Text style={[styles.text, styles.nameTxt]}>{profile.name}</Text>
           <Text style={[styles.text, styles.positionTxt]}>
             {profile.position}
@@ -55,7 +78,7 @@ const Preview = () => {
           <TouchableOpacity onPress={() => openURL(profile.instagram)}>
             <Image
               source={require("./../assets/images/instagram.png")}
-              style={{ width: 50 }}
+              style={{ width: 50, marginTop: 10 }}
             />
           </TouchableOpacity>
 
@@ -67,7 +90,15 @@ const Preview = () => {
             ))}
           </View>
         </View>
-        <Button onPress={handleSubmit}>Create Profile</Button>
+        <View>
+          {isSubmitting ? (
+            <ActivityIndicator color={Colors.yellow} size="large" />
+          ) : (
+            <>
+              <Button onPress={handleSubmit}>Create Profile</Button>
+            </>
+          )}
+        </View>
       </View>
     </ScrollView>
   );
@@ -100,6 +131,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    width: "100%",
   },
   text: {
     color: Colors.white,
@@ -127,6 +159,22 @@ const styles = StyleSheet.create({
     width: 70,
     height: 80,
     alignSelf: "flex-start",
+    marginBottom: 20,
+  },
+  avatar: {
+    width: "100%",
+    height: "100%",
+  },
+  avatarContainer: {
+    width: 140,
+    height: 140,
+    borderWidth: 2,
+
+    borderRadius: 70,
+    borderColor: Colors.yellow,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
     marginBottom: 20,
   },
   skillListContainer: {

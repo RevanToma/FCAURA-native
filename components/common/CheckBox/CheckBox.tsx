@@ -36,6 +36,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
+    gap: 30,
+    marginBottom: 20,
   },
   teamMemberTxt: {
     color: Colors.yellow,
