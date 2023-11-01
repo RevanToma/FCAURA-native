@@ -15,11 +15,14 @@ import Button from "../components/common/Buttons/Button";
 import { saveToFirebase } from "../firebase/firebase";
 import { useSelector } from "react-redux";
 import { selectUser } from "../store/user/userSelectors";
+import { useAppDispatch } from "../utils/hooks/useDispatch";
+import { completedProfileSetup } from "../store/user/userSlice";
 
 const Preview = ({ navigation }: any) => {
   const user = useSelector(selectUser);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const dispatch = useAppDispatch();
   const openURL = (url: string) => {
     if (!url || url.trim() === "") {
       console.log("Instagram username is empty or not provided");
@@ -41,7 +44,8 @@ const Preview = ({ navigation }: any) => {
     setIsSubmitting(true);
 
     try {
-      await saveToFirebase(user.uid!, user);
+      await saveToFirebase(user.uid!, { ...user, completedProfileSetup: true });
+      dispatch(completedProfileSetup());
       navigation.navigate("Review");
       setIsSubmitting(false);
       return;

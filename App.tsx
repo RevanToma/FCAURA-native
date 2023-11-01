@@ -36,7 +36,7 @@ type NotAuthenticatedNavigatorProps = {
   TeamMembers: undefined;
   Chat?: undefined;
   Settings?: undefined;
-  Auth?: undefined;
+  Authenticate?: undefined;
 };
 type SetupNavigatorProps = {
   SetupProfile: undefined;
@@ -161,10 +161,10 @@ const NotAuthenticatedNavigator = () => {
       />
 
       <Tab.Screen
-        name="Auth"
+        name="Authenticate"
         component={AuthFlowNavigator}
         options={{
-          tabBarLabel: "SignIn", // or 'Auth' or whatever you want to label this tab
+          tabBarLabel: "Sign in", // or 'Auth' or whatever you want to label this tab
           tabBarIcon: ({ color, size }) => (
             <IconButton color={color} size={size} icon="log-in" />
           ),
@@ -177,6 +177,27 @@ const NotAuthenticatedNavigator = () => {
 const SignedInNavigator = () => {
   const currentUser = useSelector(selectUser);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      setIsLoading(true);
+      if (currentUser && currentUser?.uid) {
+        try {
+          await dispatch(fetchUser(currentUser.uid));
+        } catch (error) {
+          console.error("Failed to fetch user:", error);
+        }
+
+        setIsLoading(false);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color={Colors.yellow} />;
+  }
   return (
     <Tab.Navigator
       screenOptions={{
@@ -268,29 +289,29 @@ const MainNavigator = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      if (isSignedIn && user?.uid) {
-        try {
-          await dispatch(fetchUser(user.uid)).unwrap();
-        } catch (error) {
-          console.error("Failed to fetch user:", error);
-        }
+  // useEffect(() => {
+  //   const fetchCurrentUser = async () => {
+  //     if (isSignedIn && user?.uid) {
+  //       try {
+  //         await dispatch(fetchUser(user.uid));
+  //       } catch (error) {
+  //         console.error("Failed to fetch user:", error);
+  //       }
 
-        setIsLoading(false);
-      }
-    };
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    if (isSignedIn && user?.uid) {
-      fetchCurrentUser();
-    } else {
-      setIsLoading(false);
-    }
-  }, [isSignedIn, user?.uid, dispatch]);
+  //   if (isSignedIn && user?.uid) {
+  //     fetchCurrentUser();
+  //   } else {
+  //     setIsLoading(false);
+  //   }
+  // }, []);
 
-  if (isLoading) {
-    return <ActivityIndicator size="large" color={Colors.yellow} />;
-  }
+  // if (isLoading) {
+  //   return <ActivityIndicator size="large" color={Colors.yellow} />;
+  // }
 
   if (isSignedIn && user?.completedProfileSetup) {
     return <SignedInNavigator />;

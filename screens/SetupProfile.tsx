@@ -30,6 +30,7 @@ const SetupProfile = ({ navigation }: any) => {
     position: user?.position || "",
     teamMember: user?.teamMember || false,
     name: user?.name || "",
+    completedProfileSetup: user?.completedProfileSetup || false,
   });
   const isValidBio = profileData.bio.length >= 10;
   const isValidPosition = profileData.position.length >= 3;
