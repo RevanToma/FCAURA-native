@@ -57,49 +57,53 @@ const Preview = ({ navigation }: any) => {
   return (
     <ScrollView style={styles.root}>
       <View style={{ alignItems: "center", padding: 15 }}>
-        <Text style={[styles.text, styles.header]}>
-          This is how others will see your profile!
-        </Text>
-        <View style={styles.cardContainer}>
-          <Image
-            source={require("./../assets/images/FCAURA-Logo.png")}
-            style={styles.logo}
+        {isSubmitting ? (
+          <ActivityIndicator
+            size={100}
+            color={Colors.yellow}
+            style={{ alignItems: "center", justifyContent: "center" }}
           />
-          <View style={styles.avatarContainer}>
-            <Image
-              source={require("./../assets/images/avatar.jpg")}
-              style={styles.avatar}
-            />
-          </View>
-          <Text style={[styles.text, styles.nameTxt]}>{profile.name}</Text>
-          <Text style={[styles.text, styles.positionTxt]}>
-            {profile.position}
-          </Text>
-          <Text style={[styles.text, styles.bioTxt]}> {profile.bio}</Text>
-          <TouchableOpacity onPress={() => openURL(profile.instagram)}>
-            <Image
-              source={require("./../assets/images/instagram.png")}
-              style={{ width: 50, marginTop: 10 }}
-            />
-          </TouchableOpacity>
-
-          <View style={styles.skillListContainer}>
-            {profile.skills.map((skill: string, index: number) => (
-              <View key={index} style={styles.skillContainer}>
-                <Text style={styles.skillText}>{skill}</Text>
+        ) : (
+          <>
+            <Text style={[styles.text, styles.header]}>
+              This is how others will see your profile!
+            </Text>
+            <View style={styles.cardContainer}>
+              <Image
+                source={require("./../assets/images/FCAURA-Logo.png")}
+                style={styles.logo}
+              />
+              <View style={styles.avatarContainer}>
+                <Image
+                  source={require("./../assets/images/avatar.jpg")}
+                  style={styles.avatar}
+                />
               </View>
-            ))}
-          </View>
-        </View>
-        <View>
-          {isSubmitting ? (
-            <ActivityIndicator color={Colors.yellow} size="large" />
-          ) : (
-            <>
+              <Text style={[styles.text, styles.nameTxt]}>{profile.name}</Text>
+              <Text style={[styles.text, styles.positionTxt]}>
+                {profile.position}
+              </Text>
+              <Text style={[styles.text, styles.bioTxt]}> {profile.bio}</Text>
+              <TouchableOpacity onPress={() => openURL(profile.instagram)}>
+                <Image
+                  source={require("./../assets/images/instagram.png")}
+                  style={{ width: 50, marginTop: 10 }}
+                />
+              </TouchableOpacity>
+
+              <View style={styles.skillListContainer}>
+                {profile.skills.map((skill: string, index: number) => (
+                  <View key={index} style={styles.skillContainer}>
+                    <Text style={styles.skillText}>{skill}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+            <View>
               <Button onPress={handleSubmit}>Create Profile</Button>
-            </>
-          )}
-        </View>
+            </View>
+          </>
+        )}
       </View>
     </ScrollView>
   );

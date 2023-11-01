@@ -64,6 +64,8 @@ const SetupProfile = ({ navigation }: any) => {
       };
       mutationProfileSetup.mutate(mergedData);
 
+      console.log(mergedData);
+
       navigation.navigate("SetupSkills");
     } catch (error) {
       console.log(error);

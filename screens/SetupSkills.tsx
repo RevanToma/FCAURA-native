@@ -16,7 +16,6 @@ const SetupSkills = ({ navigation }: any) => {
     queryFn: fetchProfileSetup,
   });
 
-  console.log(query.data);
   const mutation = useMutation({
     mutationFn: updateProfileSetup,
     onSuccess: () => {

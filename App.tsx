@@ -164,7 +164,7 @@ const SignedInNavigator = () => {
 
       if (data !== null) {
         const parsedData = JSON.parse(data);
-        console.log("FROM AUTH", parsedData);
+
         setTeamMember(parsedData.teamMember);
       }
     };
