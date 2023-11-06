@@ -1,4 +1,5 @@
 import axios from "axios";
+import { fetchUserFromFirebase } from "../firebase/firebase";
 
 type Auth = {
   mode?: "signUp" | "signInWithPassword";
@@ -18,10 +19,9 @@ export const authenticate = async ({ mode, email, password }: Auth) => {
     );
     const token = response.data.idToken;
     const uid = response.data.localId;
+    const user = await fetchUserFromFirebase(uid);
 
-    console.log("from auth", uid);
-
-    return { token, uid };
+    return { token, uid, user: { ...user, email: response.data.email } };
   } catch (error: any) {
     throw new Error(error.response?.data.error.message || "UNKNOWN_ERROR");
   }

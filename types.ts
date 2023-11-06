@@ -36,4 +36,5 @@ export type User = {
   completedProfileSetup: boolean;
   token: null;
   uid: null;
+  email: string;
 };

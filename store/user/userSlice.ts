@@ -80,6 +80,7 @@ const initialState: userState = {
     token: null,
     uid: null,
     teamMember: false,
+    email: "",
   },
 
   error: null,
@@ -131,6 +132,7 @@ const userSlice = createSlice({
         state.user.token = payload.token;
         state.user.uid = payload.uid;
         state.isSignedIn = true;
+        state.user = payload.user as User;
       })
       .addCase(signInUser.rejected, (state, action) => {
         state.error = action.payload as string;
