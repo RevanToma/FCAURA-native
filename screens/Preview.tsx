@@ -55,6 +55,9 @@ const Preview = ({ navigation }: any) => {
 
     setIsSubmitting(false);
   };
+
+  const userPorfileImage = user.photoURL ?? "./../assets/images/avatar.jpg";
+
   return (
     <ScrollView style={styles.root}>
       <View style={{ alignItems: "center", padding: 15 }}>
@@ -76,7 +79,7 @@ const Preview = ({ navigation }: any) => {
               />
               <View style={styles.avatarContainer}>
                 <Image
-                  source={require("./../assets/images/avatar.jpg")}
+                  source={{ uri: userPorfileImage }}
                   style={styles.avatar}
                 />
               </View>
@@ -172,11 +175,10 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   avatarContainer: {
-    width: 140,
-    height: 140,
+    width: 200,
+    height: 200,
     borderWidth: 2,
-
-    borderRadius: 70,
+    borderRadius: 100,
     borderColor: Colors.yellow,
     alignItems: "center",
     justifyContent: "center",

@@ -21,6 +21,7 @@ export const authenticate = async ({ mode, email, password }: Auth) => {
     const uid = response.data.localId;
     const user = await fetchUserFromFirebase(uid);
 
+    console.log("FROM AUTH", user);
     return { token, uid, user: { ...user, email: response.data.email } };
   } catch (error: any) {
     throw new Error(error.response?.data.error.message || "UNKNOWN_ERROR");
