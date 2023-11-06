@@ -3,13 +3,14 @@ import { selectUser } from "../../store/user/userSelectors";
 import { useState } from "react";
 import { ActivityIndicator, Platform, Image } from "react-native";
 import { Colors } from "../../constants/Colors";
-import { NotAuthenticatedNavigatorProps } from "../../App";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../../screens/Home";
 import TeamMembers from "../../screens/TeamMembers";
 import IconButton from "../common/Buttons/IconButton";
 import Chat from "../../screens/Chat";
 import SettingsStackNavigator from "./SettingsStackNavigator";
+import { NotAuthenticatedNavigatorProps } from "../../types";
 
 const Tab = createBottomTabNavigator<NotAuthenticatedNavigatorProps>();
 

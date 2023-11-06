@@ -1,10 +1,12 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { AuthFlowNavigator, NotAuthenticatedNavigatorProps } from "../../App";
+
 import { Colors } from "../../constants/Colors";
 import { Platform, Image } from "react-native";
 import Home from "../../screens/Home";
 import TeamMembers from "../../screens/TeamMembers";
 import IconButton from "../common/Buttons/IconButton";
+import { NotAuthenticatedNavigatorProps } from "../../types";
+import { AuthFlowNavigator } from "./AuthStack";
 
 const Tab = createBottomTabNavigator<NotAuthenticatedNavigatorProps>();
 

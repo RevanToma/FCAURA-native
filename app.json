@@ -26,6 +26,15 @@
 
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you upload profile pictures.",
+          "cameraPermission": "The app accesses your camera to let you take photos."
+        }
+      ]
+    ]
   }
 }

@@ -37,4 +37,14 @@ export type User = {
   token: null;
   uid: null;
   email: string;
+  photoURL: string;
+};
+
+export type NotAuthenticatedNavigatorProps = {
+  Home: undefined;
+  SignIn: undefined;
+  TeamMembers: undefined;
+  Chat?: undefined;
+  Settings?: undefined;
+  Authenticate?: undefined;
 };

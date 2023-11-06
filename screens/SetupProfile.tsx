@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../store/user/userSelectors";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
 import { logOutUser, updateUserProfile } from "../store/user/userSlice";
+import ImagePicker from "../components/ImagePicker/ImagePicker";
 
 export type ProfileData = {
   bio: string;
@@ -19,6 +20,7 @@ export type ProfileData = {
   teamMember: boolean;
   name: string;
   completedProfileSetup?: boolean;
+  photoURL?: string;
 };
 
 const SetupProfile = ({ navigation }: any) => {
@@ -64,6 +66,7 @@ const SetupProfile = ({ navigation }: any) => {
   return (
     <ScrollView style={styles.root}>
       <View style={{ alignItems: "center" }}>
+        <ImagePicker />
         <Input
           label="Bio"
           keyboardType="default"

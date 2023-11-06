@@ -81,6 +81,7 @@ const initialState: userState = {
     uid: null,
     teamMember: false,
     email: "",
+    photoURL: "",
   },
 
   error: null,

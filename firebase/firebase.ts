@@ -4,17 +4,14 @@ import App from "../App";
 import { ProfileData } from "../screens/SetupProfile";
 import { initializeApp } from "firebase/app";
 import {
-  addDoc,
-  arrayUnion,
   collection,
   doc,
   getDoc,
-  getDocs,
   getFirestore,
-  query,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 // AppRegistry.registerComponent("FCAura", () => App);
 
 const firebaseConfig = {
@@ -29,6 +26,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+export const storage = getStorage(app);
 
 export const saveToFirebase = async (uid: string, profileData: ProfileData) => {
   try {
