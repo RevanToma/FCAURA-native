@@ -2,6 +2,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Settings from "../../screens/Settings";
 import ChangeEmail from "../../screens/ChangeEmail";
 import { Colors } from "../../constants/Colors";
+import ChangePassword from "../../screens/ChangePassword";
+import ChangeProfileInfo from "../../screens/ChangeProfileInfo";
+import ChangeSkills from "../../screens/ChangeSkills";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,21 +30,21 @@ const SettingsStackNavigator = () => {
         component={ChangeEmail}
         options={{ title: "Change Email" }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="ChangePassword"
         component={ChangePassword}
-        options={{ title: 'Change Password' }}
+        options={{ title: "Change Password" }}
       />
       <Stack.Screen
         name="ChangeProfileInfo"
         component={ChangeProfileInfo}
-        options={{ title: 'Change Profile Info' }}
-      /> */}
-      {/* <Stack.Screen
+        options={{ title: "Change Profile Info" }}
+      />
+      <Stack.Screen
         name="ChangeSkills"
         component={ChangeSkills}
-        options={{ title: 'Change/Add Skills' }}
-      /> */}
+        options={{ title: "Change / Add Skills" }}
+      />
     </Stack.Navigator>
   );
 };

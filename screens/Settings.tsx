@@ -6,16 +6,33 @@ import Button from "../components/common/Buttons/Button";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
 import { logOutUser } from "../store/user/userSlice";
 import SettingsButtons from "../components/common/SettingsButtons/SettingsButtons";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const Settings = ({ navigation }: any) => {
+export type SettingsStackParamList = {
+  SettingsMain: undefined;
+  ChangeEmail: undefined;
+  ChangePassword: undefined;
+  ChangeProfileInfo: undefined;
+  ChangeSkills: undefined;
+};
+
+type SettingsScreenNavigationProp = NativeStackNavigationProp<
+  SettingsStackParamList,
+  "SettingsMain"
+>;
+type SettingsProps = {
+  navigation: SettingsScreenNavigationProp;
+};
+type SettingsScreenRoute = keyof SettingsStackParamList;
+
+const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
     dispatch(logOutUser());
   };
-  const handleNavigationButton = (screen: string) => {
+  const handleNavigationButton = (screen: SettingsScreenRoute) => {
     navigation.navigate(screen);
-    console.log(screen);
   };
   return (
     <View style={styles.root}>
@@ -32,7 +49,7 @@ const Settings = ({ navigation }: any) => {
         <View>
           <SettingsButtons
             icon="lock-closed-outline"
-            onPress={() => handleNavigationButton("changePassword")}
+            onPress={() => handleNavigationButton("ChangePassword")}
           >
             Change Password
           </SettingsButtons>
@@ -64,7 +81,6 @@ const Settings = ({ navigation }: any) => {
 
 export default Settings;
 
-// icon="chevron-forward-outline"
 const styles = StyleSheet.create({
   root: {
     flex: 1,
