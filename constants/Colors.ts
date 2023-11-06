@@ -7,5 +7,6 @@ export const Colors = {
   white: "#F7F7F7",
   bannerColor: "#F1DD56",
   error: "#FF0000",
+  settignsBtn: "#252B32",
   // error: "#ddd073",
 };

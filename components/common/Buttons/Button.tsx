@@ -11,6 +11,7 @@ type ButtonProps = {
   textStyle?: object;
   disabled?: boolean;
   icon?: string;
+  size?: number;
 };
 const Button: FC<ButtonProps> = ({
   children,
@@ -19,6 +20,7 @@ const Button: FC<ButtonProps> = ({
   textStyle,
   disabled,
   icon,
+  size,
 }) => {
   return (
     <Pressable
@@ -32,8 +34,10 @@ const Button: FC<ButtonProps> = ({
       disabled={disabled}
     >
       <View style={styles.btnContent}>
+        {icon && (
+          <IconButton icon={icon} color="white" size={size ? size : 35} />
+        )}
         <Text style={[styles.btnText, textStyle]}>{children}</Text>
-        {icon && <IconButton icon={icon} color="white" size={35} />}
       </View>
     </Pressable>
   );
