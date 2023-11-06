@@ -9,7 +9,7 @@ import Home from "../../screens/Home";
 import TeamMembers from "../../screens/TeamMembers";
 import IconButton from "../common/Buttons/IconButton";
 import Chat from "../../screens/Chat";
-import Settings from "../../screens/Settings";
+import SettingsStackNavigator from "./SettingsStackNavigator";
 
 const Tab = createBottomTabNavigator<NotAuthenticatedNavigatorProps>();
 
@@ -97,11 +97,12 @@ const SignedInNavigator = () => {
 
       <Tab.Screen
         name="Settings"
-        component={Settings}
+        component={SettingsStackNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <IconButton color={color} size={size} icon="settings" />
           ),
+          headerShown: false,
         }}
       />
     </Tab.Navigator>

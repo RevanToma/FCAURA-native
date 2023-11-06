@@ -14,7 +14,6 @@ const Settings = ({ navigation }: any) => {
     dispatch(logOutUser());
   };
   const handleNavigationButton = (screen: string) => {
-    // navigation.navigate(e)
     navigation.navigate(screen);
     console.log(screen);
   };
@@ -80,6 +79,7 @@ const styles = StyleSheet.create({
 
   txt: {
     color: Colors.white,
+
     fontFamily: "lato-bold",
     fontSize: 20,
     letterSpacing: 1,

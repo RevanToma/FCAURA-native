@@ -18,7 +18,7 @@ const SettingsButtons: React.FC<SettingsButtonsProps> = ({
       style={({ pressed }) => [pressed && styles.pressed]}
     >
       <View style={styles.btns}>
-        <View style={{ flexDirection: "row", gap: 10 }}>
+        <View style={{ flexDirection: "row", marginHorizontal: 10, gap: 40 }}>
           <IconButton icon={icon} size={20} color="white" />
           <Text style={styles.text}>{children}</Text>
         </View>
@@ -37,8 +37,9 @@ const styles = StyleSheet.create({
   btns: {
     flexDirection: "row",
     alignItems: "center",
-    width: 340,
+    width: 330,
     justifyContent: "space-between",
+
     backgroundColor: Colors.settignsBtn,
     padding: 20,
     borderRadius: 8,
