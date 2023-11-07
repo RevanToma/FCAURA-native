@@ -12,6 +12,7 @@ const useImageUpload = (user: User) => {
     setIsUploading(true);
     const response = await fetch(uri);
     const blob = await response.blob();
+
     const storageRef = ref(storage, `profile/${user.uid}`);
     const uploadTask = uploadBytesResumable(storageRef, blob);
 

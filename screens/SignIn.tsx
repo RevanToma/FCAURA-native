@@ -14,11 +14,11 @@ import { Colors } from "../constants/Colors";
 
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
-import { signInUser, signUpUser } from "../store/user/userSlice";
+import { signInUser } from "../store/user/userSlice";
 import { useForm, Controller } from "react-hook-form";
 import Button from "../components/common/Buttons/Button";
 
-type FormData = {
+export type FormData = {
   email: string;
   password: string;
 };
@@ -66,7 +66,6 @@ const SignIn = ({ navigation }: any) => {
           <Animated.Image
             entering={FadeInUp.duration(1000).springify()}
             source={require("../assets/images/FCAURA-Logo.png")}
-            style={styles.image}
           />
           <Text style={styles.headerText}>Sign in with email and password</Text>
         </View>
@@ -154,9 +153,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 5,
   },
-  image: {
-    // aspectRatio: 1,
-  },
+
   header: {
     marginTop: 20,
     width: "100%",

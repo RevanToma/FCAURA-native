@@ -34,10 +34,11 @@ export type User = {
   position: string;
   skills: string[];
   completedProfileSetup: boolean;
-  token: null;
-  uid: null;
+  // token: null;
+  uid: null | string;
   email: string;
   photoURL: string;
+  displayName?: string;
 };
 
 export type NotAuthenticatedNavigatorProps = {

@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView, ActivityIndicator } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator, Alert } from "react-native";
 import { useState } from "react";
 
 import { Colors } from "../constants/Colors";
@@ -20,6 +20,8 @@ const SetupSkills = ({ navigation }: any) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const user = useSelector(selectUser);
+
+  console.log("SETUPSKILLS", user);
   const removeSkillHandler = (skill: string) => {
     dispatch(removeSkill(skill));
   };
@@ -40,6 +42,10 @@ const SetupSkills = ({ navigation }: any) => {
           completedProfileSetup: true,
         });
         dispatch(completedProfileSetup());
+        Alert.alert(
+          "Success",
+          "Account created successfully. Email verification has been sent to your email address"
+        );
       }
     } catch (error) {
       console.error("Error updating skills in profile data:", error);

@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 
 import { FC } from "react";
 import { Colors } from "../../../constants/Colors";
@@ -12,6 +18,7 @@ type ButtonProps = {
   disabled?: boolean;
   icon?: string;
   size?: number;
+  isLoading?: boolean;
 };
 const Button: FC<ButtonProps> = ({
   children,
@@ -21,6 +28,7 @@ const Button: FC<ButtonProps> = ({
   disabled,
   icon,
   size,
+  isLoading,
 }) => {
   return (
     <Pressable
@@ -37,7 +45,9 @@ const Button: FC<ButtonProps> = ({
         {icon && (
           <IconButton icon={icon} color="white" size={size ? size : 35} />
         )}
-        <Text style={[styles.btnText, textStyle]}>{children}</Text>
+        <Text style={[styles.btnText, textStyle]}>
+          {isLoading ? <ActivityIndicator color={Colors.yellow} /> : children}
+        </Text>
       </View>
     </Pressable>
   );

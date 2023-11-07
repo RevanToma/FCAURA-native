@@ -16,12 +16,36 @@ import SetupNavigator from "./components/navigators/SetupNavigator";
 import NotAuthenticatedNavigator from "./components/navigators/NotAuthNav";
 import SignedInNavigator from "./components/navigators/SignedInNav";
 
+import { useAppDispatch } from "./utils/hooks/useDispatch";
+import { fetchUser, signSuccess } from "./store/user/userSlice";
+import { User } from "./types";
+import {
+  createUserDocumentFromAuth,
+  onAuthStateChangedListener,
+} from "./firebase/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 // const queryClient = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
 const MainNavigator = () => {
   const { isSignedIn, user } = useSelector(userSlice);
+  const auth = getAuth();
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userData = await createUserDocumentFromAuth(user);
+        console.log("storeapp", userData);
+        dispatch(signSuccess(userData));
+      }
+    });
+
+    return unsubscribe;
+  }, [dispatch]);
 
   if (isSignedIn && user?.completedProfileSetup) {
     return <SignedInNavigator />;
@@ -32,7 +56,7 @@ const MainNavigator = () => {
   }
 };
 
-export default function App() {
+const App = () => {
   const [fontsLoaded] = useFonts({
     "open-sans": require("./assets/fonts/OpenSans_Condensed-Medium.ttf"),
     "lato-bold": require("./assets/fonts/Lato-Bold.ttf"),
@@ -66,4 +90,5 @@ export default function App() {
       </PersistGate>
     </Provider>
   );
-}
+};
+export default App;

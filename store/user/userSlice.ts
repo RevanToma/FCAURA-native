@@ -1,5 +1,10 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createUser, logIn } from "../../utils/auth";
+import {
+  createUser,
+  logIn,
+  signInWithEmail,
+  signUpWithEmail,
+} from "../../utils/auth";
 import { ProfileData } from "../../screens/SetupProfile";
 import { fetchUserFromFirebase } from "../../firebase/firebase";
 import { User } from "../../types";
@@ -10,19 +15,6 @@ interface userState {
   isSignedIn: boolean;
 }
 
-// export const updateProfile = createAsyncThunk(
-//   "user/updateProfile",
-//   async (profileData: ProfileData,  thunkAPI) => {
-//     try {
-//       const updateUser = await updateFirebaseUser(ProfileData.uid, profileData);
-//       return updateUser;
-//     } catch (error: any) {
-//       console.log(error);
-//       return thunkAPI.rejectWithValue({ error: error.message });
-//     }
-//   }
-// );
-
 export const signUpUser = createAsyncThunk(
   "user/signUpUser",
   async (
@@ -30,7 +22,7 @@ export const signUpUser = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const data = await createUser(email, password);
+      const data = await signUpWithEmail(email, password);
       return data;
     } catch (error: any) {
       console.log(error);
@@ -45,8 +37,8 @@ export const signInUser = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const data = await logIn(email, password);
-      return data;
+      const userDocument = await signInWithEmail(email, password);
+      return userDocument;
     } catch (error: any) {
       console.log(error);
 
@@ -77,7 +69,7 @@ const initialState: userState = {
     position: "",
     skills: [],
     completedProfileSetup: false,
-    token: null,
+    // token: null,
     uid: null,
     teamMember: false,
     email: "",
@@ -100,6 +92,9 @@ const userSlice = createSlice({
       state.user.teamMember = teamMember;
       state.user.name = name;
     },
+    setUserPhotoURL: (state, { payload }: PayloadAction<string>) => {
+      state.user.photoURL = payload;
+    },
     logOutUser: (state) => {
       state.user = initialState.user;
       state.isSignedIn = false;
@@ -117,12 +112,18 @@ const userSlice = createSlice({
     completedProfileSetup: (state) => {
       state.user.completedProfileSetup = true;
     },
+    signSuccess: (state, { payload }) => {
+      state.user = payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(signUpUser.fulfilled, (state, { payload }) => {
-        state.user.token = payload?.token;
-        state.user.uid = payload?.uid;
+        state.user = {
+          ...state.user,
+          ...payload,
+        };
+        console.log("CURRUSET", state.user);
         state.isSignedIn = true;
       })
       .addCase(signUpUser.rejected, (state, { payload }) => {
@@ -130,13 +131,19 @@ const userSlice = createSlice({
       });
     builder
       .addCase(signInUser.fulfilled, (state, { payload }) => {
-        state.user.token = payload.token;
-        state.user.uid = payload.uid;
-        state.isSignedIn = true;
-        state.user = payload.user as User;
+        if (payload) {
+          state.user = {
+            ...state.user,
+            ...payload,
+          };
+          state.isSignedIn = true;
+        } else {
+          console.error("Sign-in successful but no payload returned");
+        }
       })
       .addCase(signInUser.rejected, (state, action) => {
         state.error = action.payload as string;
+        state.isSignedIn = false;
       });
     builder.addCase(fetchUser.fulfilled, (state, { payload }) => {
       if (payload && payload !== null) {
@@ -156,5 +163,7 @@ export const {
   addSkill,
   removeSkill,
   completedProfileSetup,
+  setUserPhotoURL,
+  signSuccess,
 } = userSlice.actions;
 export default userSlice.reducer;

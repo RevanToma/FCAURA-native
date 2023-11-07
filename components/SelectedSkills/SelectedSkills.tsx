@@ -12,7 +12,7 @@ type SelectedSkillsProps = {
 const SelectedSkills: FC<SelectedSkillsProps> = ({ skills, onRemoveSkill }) => {
   return (
     <View style={styles.skillsContainer}>
-      {skills.map((skill: string, index: number) => (
+      {skills?.map((skill: string, index: number) => (
         <View key={index} style={styles.skillButton}>
           <Text style={styles.skillTxt}>{skill}</Text>
           <IconButton

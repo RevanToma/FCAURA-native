@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import Input from "./../Input/Input";
 import Button from "../Buttons/Button";
 import { Colors } from "../../../constants/Colors";

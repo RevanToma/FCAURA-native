@@ -10,12 +10,14 @@ import { Colors } from "../../constants/Colors";
 
 import { selectUser } from "../../store/user/userSelectors";
 import { useSelector } from "react-redux";
-import ProgressBar from "../common/ProgressBar/ProgressBar";
 import useImageUpload from "../../utils/hooks/useImageUpload";
 import UploadOverlay from "../common/ProgressBar/UploadOverlay";
+import { setUserPhotoURL } from "../../store/user/userSlice";
+import { useAppDispatch } from "../../utils/hooks/useDispatch";
 
 const ImagePicker = () => {
   const user = useSelector(selectUser);
+  const dispatch = useAppDispatch();
 
   const [cameraPermissionInformation, requestPermission] =
     useCameraPermissions();
@@ -42,6 +44,7 @@ const ImagePicker = () => {
   const handleImagePicked = async (uri: string) => {
     setPickedImage(uri);
     await startUpload(uri);
+    dispatch(setUserPhotoURL(uri));
   };
   const chooseImageHandler = async () => {
     const hasPermission = await verifyPermissions();

@@ -19,6 +19,7 @@ export type ProfileData = {
   position: string;
   teamMember: boolean;
   name: string;
+  email?: string;
   completedProfileSetup?: boolean;
   photoURL?: string;
 };
@@ -52,7 +53,7 @@ const SetupProfile = ({ navigation }: any) => {
 
   const handleProfileSetup = async () => {
     try {
-      await dispatch(updateUserProfile(profileData));
+      dispatch(updateUserProfile(profileData));
       navigation.navigate("SetupSkills");
     } catch (error) {
       console.log(error);

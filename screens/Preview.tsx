@@ -7,6 +7,7 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useState } from "react";
 import { Colors } from "../constants/Colors";
@@ -42,11 +43,11 @@ const Preview = ({ navigation }: any) => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-
     try {
       await saveToFirebase(user.uid!, { ...user, completedProfileSetup: true });
-      dispatch(completedProfileSetup());
+
       navigation.navigate("Review");
+
       setIsSubmitting(false);
       return;
     } catch (error) {
@@ -56,7 +57,9 @@ const Preview = ({ navigation }: any) => {
     setIsSubmitting(false);
   };
 
-  const userPorfileImage = user.photoURL ?? "./../assets/images/avatar.jpg";
+  const userPorfileImage = user.photoURL
+    ? { uri: user.photoURL }
+    : require("../assets/images/avatar.jpg");
 
   return (
     <ScrollView style={styles.root}>
@@ -78,10 +81,7 @@ const Preview = ({ navigation }: any) => {
                 style={styles.logo}
               />
               <View style={styles.avatarContainer}>
-                <Image
-                  source={{ uri: userPorfileImage }}
-                  style={styles.avatar}
-                />
+                <Image source={userPorfileImage} style={styles.avatar} />
               </View>
               <Text style={[styles.text, styles.nameTxt]}>{user.name}</Text>
               <Text style={[styles.text, styles.positionTxt]}>
