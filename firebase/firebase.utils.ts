@@ -14,7 +14,16 @@ import {
   updatePassword,
 } from "firebase/auth";
 import { ProfileData } from "../screens/SetupProfile";
-import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "./firebase.auth";
 import { Alert } from "react-native";
 import { User } from "../types";
@@ -277,4 +286,27 @@ export const updateUserProfileFirebase = async (
     console.log("Error updating profile", error);
     throw new Error(error.message);
   }
+};
+
+export const fetchApprovedTeamMembers = async () => {
+  try {
+    const q = query(
+      collection(db, "users"),
+      where("teamMemberStatus", "==", "Approved")
+    );
+    const querySnapShot = await getDocs(q);
+    return querySnapShot.docs.map((doc) => doc.data());
+  } catch (error: any) {
+    console.log("Error fetching approved team members", error);
+    throw new Error(error.message);
+  }
+};
+
+export const subscribeToTeamMembers = async (callback: any) => {
+  const q = query(
+    collection(db, "users"),
+    where("teamMemberStatus", "==", "Approved")
+  );
+  const querySnapShot = await getDocs(q);
+  return querySnapShot.docs.map((doc) => doc.data());
 };

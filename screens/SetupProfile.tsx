@@ -37,7 +37,7 @@ type SettingsScreenNavigationProp = NativeStackNavigationProp<
   SettingsStackParamList,
   "SetupMain"
 >;
-type SettingsProps = {
+export type SettingsProps = {
   navigation: SettingsScreenNavigationProp;
 };
 

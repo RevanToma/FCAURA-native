@@ -1,3 +1,5 @@
+import { Linking } from "react-native";
+
 export const preDefinedSkills: string[] = [
   "Dribbling", // Dribbling remains similar in many languages
   "Passning", // Passing
@@ -22,10 +24,12 @@ export const preDefinedSkills: string[] = [
 ];
 
 export const formatName = (name: string) => {
-  return name
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
+  if (name) {
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  }
 };
 
 export const getButtonLabel = (
@@ -39,4 +43,21 @@ export const getButtonLabel = (
   } else {
     return "Save";
   }
+};
+
+export const openURL = (url: string) => {
+  if (!url || url.trim() === "") {
+    console.log("Instagram username is empty or not provided");
+    return;
+  }
+
+  const formattedURL = `https://www.instagram.com/${url}`;
+
+  Linking.canOpenURL(formattedURL).then((supported) => {
+    if (supported) {
+      Linking.openURL(formattedURL);
+    } else {
+      console.log("Don't know how to open URI: " + formattedURL);
+    }
+  });
 };

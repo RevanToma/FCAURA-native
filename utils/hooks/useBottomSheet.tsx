@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 
 export const useBottomSheet = (initialSnap = -1) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["20%", "95%"], []);
+  const snapPoints = useMemo(() => ["20%", "99%"], []);
   const [ContentComponent, setContentComponent] =
     useState<React.ReactNode | null>(null);
 

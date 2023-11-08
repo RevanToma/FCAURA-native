@@ -118,6 +118,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
       >
         Log out
       </Button>
+
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}

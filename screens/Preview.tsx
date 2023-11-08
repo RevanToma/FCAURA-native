@@ -15,38 +15,25 @@ import Button from "../components/common/Buttons/Button";
 
 import { useSelector } from "react-redux";
 import { selectUser } from "../store/user/userSelectors";
-import { useAppDispatch } from "../utils/hooks/useDispatch";
-import { completedProfileSetup } from "../store/user/userSlice";
 import { saveToFirebase } from "../firebase/firebase.utils";
-
-const Preview = ({ navigation }: any) => {
+import { SettingsProps } from "./SetupProfile";
+import { openURL } from "../utils/helpers/Helpers";
+type PreviewProps = {
+  uid?: string;
+  navigation?: SettingsProps;
+};
+const Preview = ({ navigation, uid }: PreviewProps) => {
   const user = useSelector(selectUser);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const dispatch = useAppDispatch();
-  const openURL = (url: string) => {
-    if (!url || url.trim() === "") {
-      console.log("Instagram username is empty or not provided");
-      return;
-    }
-
-    const formattedURL = `https://www.instagram.com/${url}`;
-
-    Linking.canOpenURL(formattedURL).then((supported) => {
-      if (supported) {
-        Linking.openURL(formattedURL);
-      } else {
-        console.log("Don't know how to open URI: " + formattedURL);
-      }
-    });
-  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       await saveToFirebase(user.uid!, { ...user, completedProfileSetup: true });
 
-      navigation.navigate("Review");
+      if (navigation) {
+        navigation.navigation.navigate("Review");
+      }
 
       setIsSubmitting(false);
       return;
@@ -61,6 +48,10 @@ const Preview = ({ navigation }: any) => {
     ? { uri: user.photoURL }
     : require("../assets/images/avatar.jpg");
 
+  if (uid) {
+    console.log(uid);
+    // const newUser = fetchUserFromFirebase(uid);
+  }
   return (
     <ScrollView style={styles.root}>
       <View style={{ alignItems: "center", padding: 15 }}>
