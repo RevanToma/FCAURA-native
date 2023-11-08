@@ -27,3 +27,16 @@ export const formatName = (name: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 };
+
+export const getButtonLabel = (
+  isTeamMember: boolean,
+  profileCompleted: boolean | undefined
+) => {
+  if (isTeamMember && !profileCompleted) {
+    return "Preview";
+  } else if (!isTeamMember && !profileCompleted) {
+    return "Create Profile";
+  } else {
+    return "Save";
+  }
+};

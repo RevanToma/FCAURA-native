@@ -5,10 +5,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../store/user/userSelectors";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
 import { ProfileData } from "./SetupProfile";
-import {
-  updateUserProfile,
-  updateUserProfileThunk,
-} from "../store/user/userSlice";
+import { updateUserProfileThunk } from "../store/user/userSlice";
 import ImagePicker from "../components/ImagePicker/ImagePicker";
 import Input from "../components/common/Input/Input";
 import { Colors } from "../constants/Colors";

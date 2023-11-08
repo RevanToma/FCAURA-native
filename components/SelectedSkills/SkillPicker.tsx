@@ -4,6 +4,7 @@ import React, { FC, useState } from "react";
 import { Platform, StyleSheet, TextInput, View } from "react-native";
 import { Colors } from "../../constants/Colors";
 import Button from "../common/Buttons/Button";
+import { getButtonLabel } from "../../utils/helpers/Helpers";
 
 interface SkillPickerProps {
   predefinedSkills: string[];
@@ -11,6 +12,7 @@ interface SkillPickerProps {
   onAddSkill: (skill: string) => void;
   handleSubmit: () => void;
   isTeammember: boolean;
+  profileCompleted?: boolean;
 }
 const SkillPicker: FC<SkillPickerProps> = ({
   predefinedSkills,
@@ -18,6 +20,7 @@ const SkillPicker: FC<SkillPickerProps> = ({
   onAddSkill,
   handleSubmit,
   isTeammember,
+  profileCompleted,
 }) => {
   const [inputSkill, setInputSkill] = useState<string>("");
 
@@ -69,7 +72,7 @@ const SkillPicker: FC<SkillPickerProps> = ({
           Add skill
         </Button>
         <Button onPress={handleSubmit}>
-          {isTeammember ? "Preview" : "Create Profile"}
+          {getButtonLabel(isTeammember, profileCompleted)}
         </Button>
       </View>
     </View>
