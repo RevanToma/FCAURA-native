@@ -1,5 +1,5 @@
 import { StyleSheet, View, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import Button from "../components/common/Buttons/Button";
 
 import { Colors } from "../constants/Colors";
@@ -12,6 +12,7 @@ import { selectUser } from "../store/user/userSelectors";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
 import { logOutUser, updateUserProfile } from "../store/user/userSlice";
 import ImagePicker from "../components/ImagePicker/ImagePicker";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export type ProfileData = {
   bio: string;
@@ -24,7 +25,23 @@ export type ProfileData = {
   photoURL?: string;
 };
 
-const SetupProfile = ({ navigation }: any) => {
+export type SettingsStackParamList = {
+  SetupMain: undefined;
+  SetupProfile: undefined;
+  SetupSkills: undefined;
+  Preview: undefined;
+  Review: undefined;
+};
+
+type SettingsScreenNavigationProp = NativeStackNavigationProp<
+  SettingsStackParamList,
+  "SetupMain"
+>;
+type SettingsProps = {
+  navigation: SettingsScreenNavigationProp;
+};
+
+const SetupProfile: FC<SettingsProps> = ({ navigation }) => {
   const user = useSelector(selectUser);
   const dispatch = useAppDispatch();
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -100,6 +117,7 @@ const SetupProfile = ({ navigation }: any) => {
           onUpdateValue={(value) => handleProfileData("instagram", value)}
         />
         <TeamMemberToggle
+          initialStatus={profileData.teamMember}
           onToggle={(status) => handleProfileData("teamMember", status)}
         />
         <Button

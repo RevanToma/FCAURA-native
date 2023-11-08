@@ -4,6 +4,7 @@ import {
   signInWithEmail,
   signUpWithEmail,
   updateFirebaseUserEmail,
+  updateUserProfileFirebase,
 } from "../../firebase/firebase.utils";
 import { ProfileData } from "../../screens/SetupProfile";
 
@@ -55,6 +56,22 @@ export const fetchUser = createAsyncThunk(
     } catch (error: any) {
       console.log(error);
 
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+type UpdateProfileDataObj = {
+  profileData: ProfileData;
+  uid: string;
+};
+export const updateUserProfileThunk = createAsyncThunk(
+  "user/updateUserProfile",
+  async ({ uid, profileData }: UpdateProfileDataObj, thunkAPI) => {
+    try {
+      await updateUserProfileFirebase(uid, profileData);
+      return profileData;
+    } catch (error: any) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
@@ -129,14 +146,14 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // builder
-    //   .addCase(updateUserEmail.fulfilled, (state, { payload }) => {
-    //     state.user.email = payload;
-    //     state.error = null;
-    //   })
-    //   .addCase(updateUserEmail.rejected, (state, { payload }: any) => {
-    //     state.error = payload.error;
-    //   });
+    builder
+      .addCase(updateUserProfileThunk.fulfilled, (state, { payload }) => {
+        state.user = { ...state.user, ...payload };
+      })
+      .addCase(updateUserProfileThunk.rejected, (state, { payload }) => {
+        state.error = payload as string;
+        console.error("Error updating the profile: ", payload);
+      });
     builder
       .addCase(signUpUser.fulfilled, (state, { payload }) => {
         state.user = {

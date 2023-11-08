@@ -17,7 +17,6 @@ import ChangePassword from "../components/ChangeEmail-ChangePassword/ChangePassw
 
 export type SettingsStackParamList = {
   SettingsMain: undefined;
-
   ChangeProfileInfo: undefined;
   ChangeSkills: undefined;
 };
@@ -26,7 +25,7 @@ type SettingsScreenNavigationProp = NativeStackNavigationProp<
   SettingsStackParamList,
   "SettingsMain"
 >;
-type SettingsProps = {
+export type SettingsProps = {
   navigation: SettingsScreenNavigationProp;
 };
 type SettingsScreenRoute = keyof SettingsStackParamList;

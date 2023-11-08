@@ -5,18 +5,20 @@ import Review from "../../screens/Review";
 import Preview from "../../screens/Preview";
 import { Colors } from "../../constants/Colors";
 
-type SetupNavigatorProps = {
-  SetupProfile: undefined;
-  SetupSkills: undefined;
-  Preview: undefined;
-  Review: undefined;
-};
+//  type SetupNavigatorProps = {
+//    SetupMain: undefined;
+//    SetupProfile: undefined;
+//    SetupSkills: undefined;
+//    Preview: undefined;
+//    Review: undefined;
+//  };
 
-const Stack = createNativeStackNavigator<SetupNavigatorProps>();
+const Stack = createNativeStackNavigator();
 
 const SetupNavigator = () => {
   return (
     <Stack.Navigator
+      initialRouteName="SetupMain"
       screenOptions={{
         headerStyle: { backgroundColor: Colors.primaryBackground },
         headerTitleStyle: {

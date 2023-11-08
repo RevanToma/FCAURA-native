@@ -264,3 +264,17 @@ export const updateUserPassword = async (newPassword: string) => {
     throw new Error("No user is currently signed in.");
   }
 };
+
+export const updateUserProfileFirebase = async (
+  uid: string,
+  profileData: ProfileData
+) => {
+  const userDocRef = doc(db, "users", uid);
+
+  try {
+    await updateDoc(userDocRef, profileData);
+  } catch (error: any) {
+    console.log("Error updating profile", error);
+    throw new Error(error.message);
+  }
+};

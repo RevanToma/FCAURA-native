@@ -80,8 +80,12 @@ const ImagePicker = () => {
     <Text style={{ color: Colors.white }}>No Profile image taken yet!</Text>
   );
 
-  if (pickedImage) {
+  if (pickedImage && !user.photoURL) {
     imagePreview = <Image source={{ uri: pickedImage }} style={styles.image} />;
+  } else if (user.photoURL) {
+    imagePreview = (
+      <Image source={{ uri: user.photoURL }} style={styles.image} />
+    );
   }
 
   return (

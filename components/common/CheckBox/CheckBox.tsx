@@ -4,10 +4,14 @@ import { Colors } from "../../../constants/Colors";
 
 interface TeamMemberToggleProps {
   onToggle?: (status: boolean) => void;
+  initialStatus: boolean;
 }
 
-const TeamMemberToggle: FC<TeamMemberToggleProps> = ({ onToggle }) => {
-  const [isTeamMember, setIsTeamMember] = useState(false);
+const TeamMemberToggle: FC<TeamMemberToggleProps> = ({
+  onToggle,
+  initialStatus,
+}) => {
+  const [isTeamMember, setIsTeamMember] = useState(initialStatus);
 
   const handleToggleChange = () => {
     const newStatus = !isTeamMember;
