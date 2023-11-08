@@ -10,7 +10,7 @@ import {
   removeSkill,
   updateUserProfileThunk,
 } from "../store/user/userSlice";
-import { saveToFirebase } from "../firebase/firebase.utils";
+
 import SelectedSkills from "../components/SelectedSkills/SelectedSkills";
 import SkillPicker from "../components/SelectedSkills/SkillPicker";
 import { preDefinedSkills } from "../utils/helpers/Helpers";

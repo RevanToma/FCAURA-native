@@ -56,8 +56,10 @@ const ChangePassword: React.FC<ChangeEmailProps> = ({ onClose }) => {
     !errors.currentPassword && currentPassword.length >= 8;
   const isNewPasswordValid =
     !errors.newPassword && newPasswordValue.length >= 8;
+
   const isConfirmPasswordValid =
-    !errors.confirmNewPassword && confirmPasswordValue === newPasswordValue;
+    newPasswordValue === confirmPasswordValue &&
+    confirmPasswordValue.length >= 8;
 
   return (
     <View style={stylesObj.root}>
