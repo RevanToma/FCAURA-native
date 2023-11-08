@@ -11,7 +11,7 @@ import {
 import { auth } from "../../firebase/firebase.auth";
 import ReauthModal from "../../utils/helpers/ReauthModal";
 import { Ionicons } from "@expo/vector-icons";
-
+import { stylesObj } from "../../constants/Colors";
 type ChangeEmailProps = {
   onClose: () => void;
 };
@@ -63,7 +63,7 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
   });
 
   return (
-    <View style={styles.root}>
+    <View style={stylesObj.root}>
       <Image
         source={require("../../assets/changeEmail.png")}
         style={styles.image}

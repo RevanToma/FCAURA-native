@@ -12,7 +12,7 @@ import { selectUser } from "../store/user/userSelectors";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ChangeEmail from "../components/ChangeEmail-ChangePassword/ChangeEmail";
 import { useBottomSheet } from "../utils/hooks/useBottomSheet";
-import { formatName } from "../utils/helpers/PredefinedSkills";
+import { formatName } from "../utils/helpers/Helpers";
 import ChangePassword from "../components/ChangeEmail-ChangePassword/ChangePassword";
 
 export type SettingsStackParamList = {

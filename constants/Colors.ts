@@ -1,3 +1,5 @@
+import { StyleSheet } from "react-native";
+
 export const Colors = {
   yellow: "#F1D202",
   green: "#00661D",
@@ -10,3 +12,12 @@ export const Colors = {
   settignsBtn: "#252B32",
   // error: "#ddd073",
 };
+
+export const stylesObj = StyleSheet.create({
+  root: {
+    backgroundColor: Colors.alternative,
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+  },
+});

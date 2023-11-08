@@ -11,6 +11,7 @@ import {
   verifyBeforeUpdateEmail,
   EmailAuthProvider,
   reauthenticateWithCredential,
+  updatePassword,
 } from "firebase/auth";
 import { ProfileData } from "../screens/SetupProfile";
 import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
@@ -247,4 +248,19 @@ export const createUserDocumentFromAuth = async (userAuth: FirebaseUser) => {
   }
 
   return { uid: userAuth.uid, ...userSnapshot.data() };
+};
+
+export const updateUserPassword = async (newPassword: string) => {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      await updatePassword(user, newPassword);
+      console.log("Password changed successfully");
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  } else {
+    throw new Error("No user is currently signed in.");
+  }
 };
