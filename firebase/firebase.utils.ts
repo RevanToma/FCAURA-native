@@ -9,6 +9,8 @@ import {
   signInWithEmailAndPassword,
   updateEmail,
   verifyBeforeUpdateEmail,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
 } from "firebase/auth";
 import { ProfileData } from "../screens/SetupProfile";
 import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
@@ -139,6 +141,31 @@ export const sendVerificationEmail = async (newEmail: string) => {
 export const onAuthStateChangedListener = (callback: any) =>
   onAuthStateChanged(auth, callback);
 
+type ReAuthenticate = {
+  user: FirebaseUser;
+  password: string;
+  newEmail: string;
+};
+
+export const reAuthenticateUser = async ({
+  user,
+  password,
+  newEmail,
+}: ReAuthenticate) => {
+  if (!user || !user.email) {
+    throw new Error("Nop user is signed in");
+  }
+  const credential = EmailAuthProvider.credential(user.email, password);
+
+  try {
+    await reauthenticateWithCredential(user, credential);
+    await updateFirebaseUserEmail(newEmail);
+  } catch (error) {
+    console.error("Reauthentication failed: ", error);
+    throw error;
+  }
+};
+
 export const updateFirebaseUserEmail = async (newEmail: string) => {
   const user = auth.currentUser;
 
@@ -154,6 +181,9 @@ export const updateFirebaseUserEmail = async (newEmail: string) => {
         email: newEmail,
       });
     } catch (error: any) {
+      if (error.code === "auth/requires-recent-login") {
+        throw new Error(error.message);
+      }
       console.error("Error updating user email: ", error);
       throw new Error(error.message);
     }

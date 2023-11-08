@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import { useCallback, useMemo, useRef } from "react";
+
 import { Colors } from "../constants/Colors";
 import Button from "../components/common/Buttons/Button";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -11,11 +11,13 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../store/user/userSelectors";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ChangeEmail from "../components/ChangeEmail-ChangePassword/ChangeEmail";
+import { useBottomSheet } from "../utils/hooks/useBottomSheet";
+import { formatName } from "../utils/helpers/PredefinedSkills";
+import ChangePassword from "../components/ChangeEmail-ChangePassword/ChangePassword";
 
 export type SettingsStackParamList = {
   SettingsMain: undefined;
-  ChangeEmail: undefined;
-  ChangePassword: undefined;
+
   ChangeProfileInfo: undefined;
   ChangeSkills: undefined;
 };
@@ -30,20 +32,14 @@ type SettingsProps = {
 type SettingsScreenRoute = keyof SettingsStackParamList;
 
 const Settings: React.FC<SettingsProps> = ({ navigation }) => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["20%", "95%"], []);
-
-  // const handleSheetChanges = useCallback((index: number) => {
-  //   console.log("handleSheetChanges", index);
-  // }, []);
-
-  const openChangeEmailSheet = () => {
-    bottomSheetRef.current?.expand();
-  };
-
-  const closeBottomSheet = () => {
-    bottomSheetRef.current?.close();
-  };
+  const {
+    bottomSheetRef,
+    closeBottomSheet,
+    openBottomSheetWithContent,
+    snapPoints,
+    ContentComponent,
+    afterCloseResetContent,
+  } = useBottomSheet();
 
   const user = useSelector(selectUser);
   const dispatch = useAppDispatch();
@@ -55,12 +51,14 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     navigation.navigate(screen);
   };
 
-  const formatName = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
+  const openChangeEmail = () => {
+    openBottomSheetWithContent(<ChangeEmail onClose={closeBottomSheet} />);
   };
+
+  const openChangePassword = () => {
+    openBottomSheetWithContent(<ChangePassword onClose={closeBottomSheet} />);
+  };
+
   const userPorfileImage = user.photoURL
     ? { uri: user.photoURL }
     : require("../assets/images/avatar.jpg");
@@ -83,14 +81,14 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
       <View style={styles.btnContainer}>
         <Text style={styles.txt}>Account</Text>
         <View>
-          <SettingsButtons icon="mail-outline" onPress={openChangeEmailSheet}>
+          <SettingsButtons icon="mail-outline" onPress={openChangeEmail}>
             Change Email
           </SettingsButtons>
         </View>
         <View>
           <SettingsButtons
             icon="lock-closed-outline"
-            onPress={() => handleNavigationButton("ChangePassword")}
+            onPress={openChangePassword}
           >
             Change Password
           </SettingsButtons>
@@ -125,7 +123,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
         ref={bottomSheetRef}
         snapPoints={snapPoints}
         index={-1}
-        // onChange={handleSheetChanges}
         enablePanDownToClose={true}
         handleIndicatorStyle={{
           backgroundColor: Colors.alternative,
@@ -136,10 +133,9 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
         backgroundStyle={{
           backgroundColor: Colors.yellow,
         }}
+        onClose={afterCloseResetContent}
       >
-        <View style={styles.contentContainer}>
-          <ChangeEmail onClose={closeBottomSheet} />
-        </View>
+        <View style={styles.contentContainer}>{ContentComponent}</View>
       </BottomSheet>
     </GestureHandlerRootView>
   );

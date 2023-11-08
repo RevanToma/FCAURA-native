@@ -5,7 +5,7 @@ import IconButton from "../Buttons/IconButton";
 type SettingsButtonsProps = {
   children?: React.ReactNode;
   onPress: () => void;
-  icon: string;
+  icon?: string;
 };
 const SettingsButtons: React.FC<SettingsButtonsProps> = ({
   children,

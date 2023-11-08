@@ -41,7 +41,7 @@ const Input: FC<inputProps> = ({
             {label}
           </Text>
           <Text style={styles.invalidLabelText}>
-            ({errorText ? errorText : ""})
+            ({errorText ? errorText : "Invalid input"})
           </Text>
         </View>
       ) : (

@@ -20,3 +20,10 @@ export const preDefinedSkills: string[] = [
   "Press", // Pressing
   "Beslutsfattande", // Decision Making
 ];
+
+export const formatName = (name: string) => {
+  return name
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};

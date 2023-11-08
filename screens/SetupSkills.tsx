@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Colors } from "../constants/Colors";
 
 import SelectedSkills from "../components/SelectedSkills/SelectedSkills";
-import { preDefinedSkills } from "./../utils/data/PredefinedSkills";
+import { preDefinedSkills } from "../utils/helpers/PredefinedSkills";
 import SkillPicker from "../components/SelectedSkills/SkillPicker";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
 import {

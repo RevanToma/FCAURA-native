@@ -4,7 +4,13 @@ import { Colors } from "../../constants/Colors";
 import Button from "../common/Buttons/Button";
 import { Controller, useForm } from "react-hook-form";
 
-import { updateFirebaseUserEmail } from "../../firebase/firebase.utils";
+import {
+  reAuthenticateUser,
+  updateFirebaseUserEmail,
+} from "../../firebase/firebase.utils";
+import { auth } from "../../firebase/firebase.auth";
+import ReauthModal from "../../utils/helpers/ReauthModal";
+import { Ionicons } from "@expo/vector-icons";
 
 type ChangeEmailProps = {
   onClose: () => void;
@@ -20,7 +26,23 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
     formState: { errors, isValid },
   } = useForm<ChangeEmailFormData>();
   const [isLoading, setIsLoading] = useState(false);
+  const [isReauthModalVisible, setIsReauthModalVisible] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
 
+  const handleReauthentication = async (password: string) => {
+    setIsLoading(true);
+    try {
+      const user = auth.currentUser!;
+      await reAuthenticateUser({ user, password, newEmail: pendingEmail });
+      setIsLoading(false);
+      onClose();
+    } catch (error: any) {
+      setIsLoading(false);
+      Alert.alert("Reauthentication Error", error.message);
+    }
+
+    setIsReauthModalVisible(false);
+  };
   const handleSave = handleSubmit(async ({ email }) => {
     setIsLoading(true);
 
@@ -30,8 +52,13 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
       setIsLoading(false);
       onClose();
     } catch (error: any) {
+      if (error.message === "Firebase: Error (auth/requires-recent-login).") {
+        setPendingEmail(email);
+        setIsReauthModalVisible(true);
+      }
+
       setIsLoading(false);
-      Alert.alert("Error", error.message);
+      // Alert.alert("Error", error.message);
     }
   });
 
@@ -48,15 +75,25 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            placeholder="New email"
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.input}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholder="New email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            {isValid && (
+              <Ionicons
+                name="checkmark-circle-outline"
+                color={Colors.green}
+                size={25}
+                style={{ position: "absolute", right: 0, marginRight: 10 }}
+              />
+            )}
+          </View>
         )}
         name="email"
         rules={{
@@ -66,6 +103,12 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
             message: "Not a valid email",
           },
         }}
+      />
+
+      <ReauthModal
+        isVisible={isReauthModalVisible}
+        onConfirm={handleReauthentication}
+        onCancel={() => setIsReauthModalVisible(false)}
       />
 
       <Button onPress={handleSave} style={styles.btn} isLoading={isLoading}>
@@ -95,8 +138,15 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     fontSize: 16,
     textAlignVertical: "top",
-    width: "80%",
+    width: "100%",
     marginVertical: 10,
+  },
+  inputView: {
+    width: "80%",
+    position: "relative",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     alignSelf: "flex-start",
