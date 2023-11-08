@@ -14,7 +14,8 @@ import {
 } from "../store/user/userSlice";
 import { useSelector } from "react-redux";
 import { selectUser } from "../store/user/userSelectors";
-import { saveToFirebase } from "../firebase/firebase";
+import { saveToFirebase } from "../firebase/firebase.utils";
+
 const SetupSkills = ({ navigation }: any) => {
   const dispatch = useAppDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -1,12 +1,12 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  createUser,
-  logIn,
+  fetchUserFromFirebase,
   signInWithEmail,
   signUpWithEmail,
-} from "../../utils/auth";
+  updateFirebaseUserEmail,
+} from "../../firebase/firebase.utils";
 import { ProfileData } from "../../screens/SetupProfile";
-import { fetchUserFromFirebase } from "../../firebase/firebase";
+
 import { User } from "../../types";
 
 interface userState {
@@ -60,6 +60,18 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
+// export const updateUserEmail = createAsyncThunk(
+//   "user/updateUserEmail",
+//   async (newEmail: string, thunkAPI) => {
+//     try {
+//       await updateFirebaseUserEmail(newEmail);
+//       return newEmail;
+//     } catch (error: any) {
+//       return thunkAPI.rejectWithValue({ error: error.message });
+//     }
+//   }
+// );
+
 const initialState: userState = {
   user: {
     name: "",
@@ -69,7 +81,7 @@ const initialState: userState = {
     position: "",
     skills: [],
     completedProfileSetup: false,
-    // token: null,
+
     uid: null,
     teamMember: false,
     email: "",
@@ -117,6 +129,14 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // builder
+    //   .addCase(updateUserEmail.fulfilled, (state, { payload }) => {
+    //     state.user.email = payload;
+    //     state.error = null;
+    //   })
+    //   .addCase(updateUserEmail.rejected, (state, { payload }: any) => {
+    //     state.error = payload.error;
+    //   });
     builder
       .addCase(signUpUser.fulfilled, (state, { payload }) => {
         state.user = {

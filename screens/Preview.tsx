@@ -13,11 +13,11 @@ import { useState } from "react";
 import { Colors } from "../constants/Colors";
 import Button from "../components/common/Buttons/Button";
 
-import { saveToFirebase } from "../firebase/firebase";
 import { useSelector } from "react-redux";
 import { selectUser } from "../store/user/userSelectors";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
 import { completedProfileSetup } from "../store/user/userSlice";
+import { saveToFirebase } from "../firebase/firebase.utils";
 
 const Preview = ({ navigation }: any) => {
   const user = useSelector(selectUser);

@@ -1,8 +1,10 @@
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useState } from "react";
 import { Alert } from "react-native";
-import { saveToFirebase, storage } from "../../firebase/firebase";
+
 import { User } from "../../types";
+import { storage } from "../../firebase/firebase.auth";
+import { saveToFirebase } from "../../firebase/firebase.utils";
 
 const useImageUpload = (user: User) => {
   const [isUploading, setIsUploading] = useState(false);

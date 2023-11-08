@@ -1,57 +1,98 @@
-import { Alert, AppRegistry } from "react-native";
-import App from "../App";
+import axios from "axios";
+import { auth } from "../firebase/firebase.auth";
 import { User as FirebaseUser } from "@firebase/auth";
 
-import { ProfileData } from "../screens/SetupProfile";
-import { initializeApp } from "firebase/app";
 import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-import {
-  getAuth,
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
   sendEmailVerification,
+  signInWithEmailAndPassword,
   updateEmail,
   verifyBeforeUpdateEmail,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  initializeAuth,
-  getReactNativePersistence,
 } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { ProfileData } from "../screens/SetupProfile";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { db } from "./firebase.auth";
+import { Alert } from "react-native";
 import { User } from "../types";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// AppRegistry.registerComponent("FCAura", () => App);
-
-const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_API_KEY!,
-  authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN!,
-  databaseURL: process.env.EXPO_PUBLIC_DATABSE_URL!,
-  projectId: process.env.EXPO_PUBLIC_PROJECT_ID!,
-  storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET!,
-  messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID!,
-  appId: process.env.EXPO_PUBLIC_APP_ID!,
+type Auth = {
+  mode?: "signUp" | "signInWithPassword";
+  email: string;
+  password: string;
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const authenticate = async ({ mode, email, password }: Auth) => {
+  try {
+    const response = await axios.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:${mode}?key=${process.env.EXPO_PUBLIC_API_KEY}`,
+      {
+        email,
+        password,
+        returnSecureToken: true,
+      }
+    );
+    // const token = response.data.idToken;
+    const uid = response.data.localId;
+    const user = await fetchUserFromFirebase(uid);
 
-export const storage = getStorage(app);
+    return { uid, user: { ...user, email: response.data.email } };
+  } catch (error: any) {
+    throw new Error(error.response?.data.error.message || "UNKNOWN_ERROR");
+  }
+};
 
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
-console.log("USERAUTH", auth);
+export const createUser = (email: string, password: string) => {
+  return authenticate({ mode: "signUp", email, password });
+};
+
+export function logIn(email: string, password: string) {
+  return authenticate({ mode: "signInWithPassword", email, password });
+}
+// export const sendVerificationEmail = async () => {
+//   const user = auth.currentUser;
+
+//   if (user) {
+//     try {
+//       await sendEmailVerification(user); // This sends a verification email to the user
+//       console.log("Verification email sent.");
+//     } catch (error: any) {
+//       console.error("Error sending verification email: ", error);
+//       throw new Error(error.message);
+//     }
+//   } else {
+//     throw new Error("User is not signed in.");
+//   }
+// };
+
+export const signUpWithEmail = async (email: string, password: string) => {
+  if (!email || !password) return;
+
+  try {
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    await sendEmailVerification(user);
+
+    return createUserDocumentFromAuth(user);
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+export const signInWithEmail = async (email: string, password: string) => {
+  if (!email || !password) return;
+
+  try {
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+    return await createUserDocumentFromAuth(user);
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
 export const saveToFirebase = async (uid: string, profileData: ProfileData) => {
   try {
     const userRef = doc(collection(db, "users"), uid); // Use the UID as the document ID
@@ -79,7 +120,6 @@ export const updateFirebaseUser = async (
 };
 
 export const sendVerificationEmail = async (newEmail: string) => {
-  // const auth = getAuth();
   const user = auth.currentUser;
 
   if (user) {
@@ -99,27 +139,7 @@ export const sendVerificationEmail = async (newEmail: string) => {
 export const onAuthStateChangedListener = (callback: any) =>
   onAuthStateChanged(auth, callback);
 
-export const reAuthenticateUser = async (email: string, password: string) => {
-  // const auth = getAuth();
-  const user = auth.currentUser;
-
-  // Create credentials
-  const credentials = EmailAuthProvider.credential(email, password);
-
-  if (user) {
-    try {
-      // Reauthenticate
-      await reauthenticateWithCredential(user, credentials);
-      console.log("User re-authenticated");
-      // The user is re-authenticated and you can proceed with sensitive operations here
-    } catch (error: any) {
-      console.error("Error re-authenticating user: ", error);
-      throw new Error(error.message);
-    }
-  }
-};
 export const updateFirebaseUserEmail = async (newEmail: string) => {
-  // const auth = getAuth();
   const user = auth.currentUser;
 
   if (user) {

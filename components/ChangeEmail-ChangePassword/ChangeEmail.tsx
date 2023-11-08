@@ -3,20 +3,14 @@ import React, { useState } from "react";
 import { Colors } from "../../constants/Colors";
 import Button from "../common/Buttons/Button";
 import { Controller, useForm } from "react-hook-form";
-import { useAppDispatch } from "../../utils/hooks/useDispatch";
 
-import {
-  reAuthenticateUser,
-  updateFirebaseUserEmail,
-} from "../../firebase/firebase";
-import { selectUser } from "../../store/user/userSelectors";
-import { useSelector } from "react-redux";
+import { updateFirebaseUserEmail } from "../../firebase/firebase.utils";
+
 type ChangeEmailProps = {
   onClose: () => void;
 };
 type ChangeEmailFormData = {
   email: string;
-  // password: string;
 };
 
 const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
@@ -27,15 +21,10 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
   } = useForm<ChangeEmailFormData>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const dispatch = useAppDispatch();
-  const user = useSelector(selectUser);
-
   const handleSave = handleSubmit(async ({ email }) => {
     setIsLoading(true);
 
     try {
-      // await reAuthenticateUser(user.email, password);
-
       await updateFirebaseUserEmail(email);
 
       setIsLoading(false);
@@ -78,22 +67,7 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
           },
         }}
       />
-      {/* <Controller
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            placeholder="Current password"
-            autoCapitalize="none"
-            secureTextEntry // This makes sure the password is not visible
-          />
-        )}
-        name="password"
-        rules={{ required: "Password is required" }}
-      /> */}
+
       <Button onPress={handleSave} style={styles.btn} isLoading={isLoading}>
         Save
       </Button>

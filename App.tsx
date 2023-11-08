@@ -17,13 +17,11 @@ import NotAuthenticatedNavigator from "./components/navigators/NotAuthNav";
 import SignedInNavigator from "./components/navigators/SignedInNav";
 
 import { useAppDispatch } from "./utils/hooks/useDispatch";
-import { fetchUser, signSuccess } from "./store/user/userSlice";
-import { User } from "./types";
-import {
-  createUserDocumentFromAuth,
-  onAuthStateChangedListener,
-} from "./firebase/firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { signSuccess } from "./store/user/userSlice";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { createUserDocumentFromAuth } from "./firebase/firebase.utils";
+import { auth } from "./firebase/firebase.auth";
 
 // const queryClient = new QueryClient();
 
@@ -31,7 +29,6 @@ SplashScreen.preventAutoHideAsync();
 
 const MainNavigator = () => {
   const { isSignedIn, user } = useSelector(userSlice);
-  const auth = getAuth();
 
   const dispatch = useAppDispatch();
 
@@ -45,7 +42,7 @@ const MainNavigator = () => {
     });
 
     return unsubscribe;
-  }, [dispatch]);
+  }, []);
 
   if (isSignedIn && user?.completedProfileSetup) {
     return <SignedInNavigator />;
