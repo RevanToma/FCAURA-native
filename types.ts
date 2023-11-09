@@ -1,3 +1,4 @@
+import { DocumentData } from "firebase/firestore";
 export type NotAuthenticatedStackParamList = {
   Home: undefined;
   "Team Members": undefined;
@@ -50,4 +51,8 @@ export type NotAuthenticatedNavigatorProps = {
   Chat?: undefined;
   Settings?: undefined;
   Authenticate?: undefined;
+};
+
+export type FirebaseDocumentData = {
+  DocumentData: DocumentData;
 };

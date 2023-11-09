@@ -15,10 +15,12 @@ import {
 } from "firebase/auth";
 import { ProfileData } from "../screens/SetupProfile";
 import {
+  DocumentData,
   collection,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -314,11 +316,21 @@ export const fetchMemberApplicants = async () => {
   }
 };
 
-export const subscribeToTeamMembers = async (callback: any) => {
+export const subscribeToTeamMembers = (
+  callback: (members: DocumentData[]) => void
+) => {
   const q = query(
     collection(db, "users"),
     where("teamMemberStatus", "==", "Approved")
   );
-  const querySnapShot = await getDocs(q);
-  return querySnapShot.docs.map((doc) => doc.data());
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const members: DocumentData[] = [];
+    querySnapshot.forEach((doc) => {
+      members.push({ uid: doc.id, ...doc.data() });
+    });
+    callback(members);
+  });
+
+  return unsubscribe;
 };

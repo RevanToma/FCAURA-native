@@ -1,29 +1,16 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "../constants/Colors";
-import {
-  DocumentData,
-  collection,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 import { FlashList } from "@shopify/flash-list";
 import { formatName } from "../utils/helpers/Helpers";
 import Button from "../components/common/Buttons/Button";
-import { db } from "../firebase/firebase.auth";
 import { useBottomSheet } from "../utils/hooks/useBottomSheet";
 import TeamMemberProfileCard from "../components/TeamMemberProfileCard/TeamMemberProfileCard";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { subscribeToTeamMembers } from "../firebase/firebase.utils";
+import { DocumentData } from "firebase/firestore";
 
 const TeamMembers = () => {
   const [teamMembers, setTeamMembers] = useState<DocumentData[]>([]);
@@ -44,17 +31,8 @@ const TeamMembers = () => {
   };
 
   useEffect(() => {
-    // subscription to Firebase
-    const q = query(
-      collection(db, "users"),
-      where("teamMemberStatus", "==", "Approved")
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const members: DocumentData[] = [];
-      querySnapshot.forEach((doc) => {
-        members.push({ uid: doc.id, ...doc.data() });
-      });
-      setTeamMembers(members);
+    const unsubscribe = subscribeToTeamMembers((newMembers) => {
+      setTeamMembers(newMembers);
     });
 
     return () => unsubscribe();
