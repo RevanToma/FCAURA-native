@@ -98,7 +98,7 @@ const initialState: userState = {
     position: "",
     skills: [],
     completedProfileSetup: false,
-
+    role: "User",
     uid: null,
     teamMember: false,
     email: "",

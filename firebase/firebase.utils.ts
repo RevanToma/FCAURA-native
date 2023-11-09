@@ -234,6 +234,7 @@ export const createUserDocumentFromAuth = async (userAuth: FirebaseUser) => {
     const newUser: Partial<User> = {
       email: userAuth.email ?? "",
       name: displayName,
+      role: "User",
       bio: "",
       instagram: "",
       teamMemberStatus: "Pending",
@@ -294,6 +295,17 @@ export const fetchApprovedTeamMembers = async () => {
       collection(db, "users"),
       where("teamMemberStatus", "==", "Approved")
     );
+    const querySnapShot = await getDocs(q);
+    return querySnapShot.docs.map((doc) => doc.data());
+  } catch (error: any) {
+    console.log("Error fetching approved team members", error);
+    throw new Error(error.message);
+  }
+};
+
+export const fetchMemberApplicants = async () => {
+  try {
+    const q = query(collection(db, "users"), where("teamMember", "==", true));
     const querySnapShot = await getDocs(q);
     return querySnapShot.docs.map((doc) => doc.data());
   } catch (error: any) {

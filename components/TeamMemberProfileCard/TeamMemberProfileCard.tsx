@@ -14,7 +14,7 @@ import { Colors } from "../../constants/Colors";
 import { formatName, openURL } from "../../utils/helpers/Helpers";
 
 type Props = {
-  onClose: () => void;
+  onClose?: () => void;
   uid: string;
 };
 

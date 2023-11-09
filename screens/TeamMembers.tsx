@@ -15,7 +15,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 import { FlashList } from "@shopify/flash-list";
 import { formatName } from "../utils/helpers/Helpers";
@@ -71,11 +71,11 @@ const TeamMembers = () => {
           <View style={styles.memberCard}>
             <Image
               style={styles.memberImage}
-              source={{
-                uri: item.photoURL
-                  ? item.photoURL
-                  : require("../assets/images/avatar.jpg"),
-              }}
+              source={
+                item.photoURL
+                  ? { uri: item.photoURL }
+                  : require("../assets/images/avatar.jpg")
+              }
             />
             <Text style={styles.memberName}>{formatName(item.name)}</Text>
             <View style={styles.skillsContainer}>
@@ -104,6 +104,7 @@ const TeamMembers = () => {
         enablePanDownToClose={true}
         handleIndicatorStyle={{
           backgroundColor: Colors.alternative,
+
           width: 40,
           height: 5,
           borderRadius: 5,
@@ -113,7 +114,9 @@ const TeamMembers = () => {
         }}
         onClose={afterCloseResetContent}
       >
-        <View style={styles.contentContainer}>{ContentComponent}</View>
+        <BottomSheetScrollView style={styles.contentContainer}>
+          {ContentComponent}
+        </BottomSheetScrollView>
       </BottomSheet>
     </GestureHandlerRootView>
   );
@@ -178,5 +181,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+    backgroundColor: Colors.alternative,
   },
 });

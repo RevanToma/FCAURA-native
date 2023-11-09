@@ -5,10 +5,15 @@ import { Colors } from "../../constants/Colors";
 
 import ChangeProfileInfo from "../../screens/ChangeProfileInfo";
 import ChangeSkills from "../../screens/ChangeSkills";
+import Dashboard from "../../screens/Dashboard";
+import { auth } from "../../firebase/firebase.auth";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../store/user/userSelectors";
 
 const Stack = createNativeStackNavigator();
 
 const SettingsStackNavigator = () => {
+  const currentUser = useSelector(selectUser);
   return (
     <Stack.Navigator
       initialRouteName="SettingsMain"
@@ -36,6 +41,13 @@ const SettingsStackNavigator = () => {
         component={ChangeSkills}
         options={{ title: "Change / Add Skills" }}
       />
+      {currentUser?.role === "Admin" && (
+        <Stack.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{ title: "Dashboard" }}
+        />
+      )}
     </Stack.Navigator>
   );
 };

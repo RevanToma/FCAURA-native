@@ -22,7 +22,7 @@ type PreviewProps = {
   uid?: string;
   navigation?: SettingsProps;
 };
-const Preview = ({ navigation, uid }: PreviewProps) => {
+const Preview = ({ navigation, uid }: any) => {
   const user = useSelector(selectUser);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,7 +32,7 @@ const Preview = ({ navigation, uid }: PreviewProps) => {
       await saveToFirebase(user.uid!, { ...user, completedProfileSetup: true });
 
       if (navigation) {
-        navigation.navigation.navigate("Review");
+        navigation.navigate("Review");
       }
 
       setIsSubmitting(false);

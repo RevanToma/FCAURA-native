@@ -25,6 +25,8 @@ export type MainStackParamList = {
 
 export type isTeamMemberStatus = "Pending" | "Approved" | "Rejected";
 
+type userRoles = "Admin" | "User";
+
 export type User = {
   name: string;
   bio: string;
@@ -34,7 +36,7 @@ export type User = {
   position: string;
   skills: string[];
   completedProfileSetup: boolean;
-  // token: null;
+  role: userRoles;
   uid: null | string;
   email: string;
   photoURL: string;
