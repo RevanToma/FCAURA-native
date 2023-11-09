@@ -1,7 +1,11 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Colors, stylesObj } from "../constants/Colors";
-import { fetchMemberApplicants } from "../firebase/firebase.utils";
+import { Colors } from "../constants/Colors";
+import {
+  fetchMemberApplicants,
+  rejectOrApproveApplicants,
+  subscribeToApplicants,
+} from "../firebase/firebase.utils";
 import { DocumentData } from "firebase/firestore";
 import { FlashList } from "@shopify/flash-list";
 import { formatName } from "../utils/helpers/Helpers";
@@ -11,16 +15,12 @@ import { useBottomSheet } from "../utils/hooks/useBottomSheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
+interface LoadingStates {
+  [key: string]: boolean;
+}
+
 const Dashboard = () => {
   const [applicants, setApplicants] = useState<DocumentData[]>([]);
-
-  useEffect(() => {
-    const getApplicants = async () => {
-      const memberApplicants = await fetchMemberApplicants();
-      setApplicants(memberApplicants);
-    };
-    getApplicants();
-  }, []);
 
   const {
     bottomSheetRef,
@@ -30,11 +30,27 @@ const Dashboard = () => {
     afterCloseResetContent,
   } = useBottomSheet();
 
-  const rejectApplicants = () => {};
-  const approveApplicants = () => {};
-
   const seeApplicantProfile = (uid: string) => {
     openBottomSheetWithContent(<TeamMemberProfileCard uid={uid} />);
+  };
+
+  useEffect(() => {
+    const usubscribe = subscribeToApplicants(setApplicants);
+
+    return () => usubscribe();
+  }, []);
+
+  const approveOrRejectApplicants = async (uid: string, status: string) => {
+    try {
+      await rejectOrApproveApplicants(uid, status);
+    } catch (error: any) {
+      console.log(error);
+      Alert.alert(
+        "Error",
+        "Something went wrong, please try again later",
+        error.message
+      );
+    }
   };
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -43,13 +59,7 @@ const Dashboard = () => {
         keyExtractor={(item) => item.uid}
         renderItem={({ item }) => (
           <View style={styles.memberCard}>
-            <View
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "space-between",
-              }}
-            >
+            <View style={styles.cardImgs}>
               <Image
                 source={require("../assets/images/FCAURA-Logo.png")}
                 style={styles.logo}
@@ -75,8 +85,8 @@ const Dashboard = () => {
             />
             <Text style={styles.memberName}>{formatName(item.name)}</Text>
             <Button
-              style={styles.btn}
-              textStyle={styles.btnTxt}
+              style={[styles.btn, { backgroundColor: Colors.yellow }]}
+              textStyle={[styles.btnTxt, { color: Colors.alternative }]}
               onPress={() => seeApplicantProfile(item.uid)}
             >
               See Profile
@@ -91,14 +101,14 @@ const Dashboard = () => {
               <Button
                 textStyle={styles.btnTxt}
                 style={[styles.rejectBtn, styles.btn]}
-                onPress={rejectApplicants}
+                onPress={() => approveOrRejectApplicants(item.uid, "Rejected")}
               >
                 Reject
               </Button>
               <Button
                 style={styles.btn}
                 textStyle={styles.btnTxt}
-                onPress={approveApplicants}
+                onPress={() => approveOrRejectApplicants(item.uid, "Approved")}
               >
                 Approve
               </Button>
@@ -170,5 +180,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     backgroundColor: Colors.alternative,
+  },
+  cardImgs: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
   },
 });

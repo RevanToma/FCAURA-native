@@ -334,3 +334,35 @@ export const subscribeToTeamMembers = (
 
   return unsubscribe;
 };
+
+export const subscribeToApplicants = (
+  callback: (applicants: DocumentData[]) => void
+) => {
+  const q = query(
+    collection(db, "users"),
+    where("teamMemberStatus", "in", ["Approved", "Rejected"])
+  );
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const newApplicants: DocumentData[] = [];
+    querySnapshot.forEach((doc) => {
+      newApplicants.push({ uid: doc.id, ...doc.data() });
+    });
+    callback(newApplicants);
+  });
+  return unsubscribe;
+};
+
+export const rejectOrApproveApplicants = async (
+  uid: string,
+  status: string
+) => {
+  const userRef = doc(db, "users", uid);
+  try {
+    await updateDoc(userRef, {
+      teamMemberStatus: status,
+    });
+  } catch (error: any) {
+    console.error("Error updating document: ", error);
+  }
+};

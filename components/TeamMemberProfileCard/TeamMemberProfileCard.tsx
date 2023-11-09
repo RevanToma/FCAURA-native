@@ -31,6 +31,10 @@ const TeamMemberProfileCard: React.FC<Props> = ({ onClose, uid }) => {
     fetchProfile(uid);
   }, []);
 
+  const userPorfileImage = profileData?.photoURL
+    ? { uri: profileData?.photoURL }
+    : require("../../assets/images/avatar.jpg");
+
   return (
     <View style={styles.root}>
       <View style={styles.cardContainer}>
@@ -39,10 +43,7 @@ const TeamMemberProfileCard: React.FC<Props> = ({ onClose, uid }) => {
           style={styles.logo}
         />
         <View style={styles.avatarContainer}>
-          <Image
-            source={{ uri: profileData?.photoURL }}
-            style={styles.avatar}
-          />
+          <Image source={userPorfileImage} style={styles.avatar} />
         </View>
         <Text style={[styles.text, styles.nameTxt]}>
           {formatName(profileData?.name)}
