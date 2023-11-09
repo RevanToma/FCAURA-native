@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { fetchUserFromFirebase } from "../../firebase/firebase.utils";
@@ -18,14 +19,16 @@ type Props = {
   uid: string;
 };
 
-const TeamMemberProfileCard: React.FC<Props> = ({ onClose, uid }) => {
+const TeamMemberProfileCard: React.FC<Props> = ({ uid }) => {
   const [profileData, setProfileData] = useState<DocumentData>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async (uid: string) => {
       const user = await fetchUserFromFirebase(uid);
       if (user) {
         setProfileData(user);
+        setLoading(false);
       }
     };
     fetchProfile(uid);
@@ -37,36 +40,40 @@ const TeamMemberProfileCard: React.FC<Props> = ({ onClose, uid }) => {
 
   return (
     <View style={styles.root}>
-      <View style={styles.cardContainer}>
-        <Image
-          source={require("../../assets/images/FCAURA-Logo.png")}
-          style={styles.logo}
-        />
-        <View style={styles.avatarContainer}>
-          <Image source={userPorfileImage} style={styles.avatar} />
-        </View>
-        <Text style={[styles.text, styles.nameTxt]}>
-          {formatName(profileData?.name)}
-        </Text>
-        <Text style={[styles.text, styles.positionTxt]}>
-          {profileData?.position}
-        </Text>
-        <Text style={[styles.text, styles.bioTxt]}> {profileData?.bio}</Text>
-        <TouchableOpacity onPress={() => openURL(profileData?.instagram)}>
+      {loading ? (
+        <ActivityIndicator size="large" color={Colors.yellow} />
+      ) : (
+        <View style={styles.cardContainer}>
           <Image
-            source={require("../../assets/images/instagram.png")}
-            style={{ width: 50 }}
+            source={require("../../assets/images/FCAURA-Logo.png")}
+            style={styles.logo}
           />
-        </TouchableOpacity>
+          <View style={styles.avatarContainer}>
+            <Image source={userPorfileImage} style={styles.avatar} />
+          </View>
+          <Text style={[styles.text, styles.nameTxt]}>
+            {formatName(profileData?.name)}
+          </Text>
+          <Text style={[styles.text, styles.positionTxt]}>
+            {profileData?.position}
+          </Text>
+          <Text style={[styles.text, styles.bioTxt]}> {profileData?.bio}</Text>
+          <TouchableOpacity onPress={() => openURL(profileData?.instagram)}>
+            <Image
+              source={require("../../assets/images/instagram.png")}
+              style={{ width: 50 }}
+            />
+          </TouchableOpacity>
 
-        <View style={styles.skillListContainer}>
-          {profileData?.skills.map((skill: string, index: number) => (
-            <View key={index} style={styles.skillContainer}>
-              <Text style={styles.skillText}>{skill}</Text>
-            </View>
-          ))}
+          <View style={styles.skillListContainer}>
+            {profileData?.skills.map((skill: string, index: number) => (
+              <View key={index} style={styles.skillContainer}>
+                <Text style={styles.skillText}>{skill}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 };

@@ -12,7 +12,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { subscribeToTeamMembers } from "../firebase/firebase.utils";
 import { DocumentData } from "firebase/firestore";
 
-const TeamMembers = () => {
+const TeamMembers = ({ navigation }: any) => {
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Team Members",
+    });
+  });
   const [teamMembers, setTeamMembers] = useState<DocumentData[]>([]);
 
   const {
@@ -37,9 +42,10 @@ const TeamMembers = () => {
 
     return () => unsubscribe();
   }, []);
-  // const userPorfileImage = user.photoURL
-  //   ? { uri: user.photoURL }
-  //   : require("../assets/images/avatar.jpg");
+  //  const userPorfileImage = user.photoURL
+  //    ? { uri: user.photoURL }
+  //    : require("../assets/images/avatar.jpg");
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <FlashList
@@ -55,6 +61,7 @@ const TeamMembers = () => {
                   : require("../assets/images/avatar.jpg")
               }
             />
+
             <Text style={styles.memberName}>{formatName(item.name)}</Text>
             <View style={styles.skillsContainer}>
               {item.skills.map((skill: string, index: number) => (

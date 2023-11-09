@@ -2,7 +2,6 @@ import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "../constants/Colors";
 import {
-  fetchMemberApplicants,
   rejectOrApproveApplicants,
   subscribeToApplicants,
 } from "../firebase/firebase.utils";

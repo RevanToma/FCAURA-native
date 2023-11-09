@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Alert,
+  Platform,
 } from "react-native";
 
 import { Colors, stylesObj } from "../../constants/Colors";
@@ -169,9 +170,15 @@ const ChangePassword: React.FC<ChangeEmailProps> = ({ onClose }) => {
           )}
           name="confirmNewPassword"
         />
+
         <Button style={styles.btn} onPress={handleSubmit(onSubmit)}>
           Change Password
         </Button>
+        {Platform.OS === "android" && (
+          <Button style={{ alignSelf: "center" }} onPress={onClose}>
+            Close
+          </Button>
+        )}
       </ScrollView>
     </View>
   );

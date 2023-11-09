@@ -1,4 +1,12 @@
-import { Image, StyleSheet, TextInput, View, Text, Alert } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  Alert,
+  Platform,
+} from "react-native";
 import React, { useState } from "react";
 import { Colors } from "../../constants/Colors";
 import Button from "../common/Buttons/Button";
@@ -114,6 +122,11 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
       <Button onPress={handleSave} style={styles.btn} isLoading={isLoading}>
         Save
       </Button>
+      {Platform.OS === "android" && (
+        <Button style={styles.btn} onPress={onClose}>
+          Close
+        </Button>
+      )}
     </View>
   );
 };
