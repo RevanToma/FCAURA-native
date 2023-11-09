@@ -1,22 +1,15 @@
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "../constants/Colors";
-import {
-  rejectOrApproveApplicants,
-  subscribeToApplicants,
-} from "../firebase/firebase.utils";
 import { DocumentData } from "firebase/firestore";
 import { FlashList } from "@shopify/flash-list";
-import { formatName } from "../utils/helpers/Helpers";
+import { approve, formatName } from "../utils/helpers/Helpers";
 import Button from "../components/common/Buttons/Button";
 import TeamMemberProfileCard from "../components/TeamMemberProfileCard/TeamMemberProfileCard";
 import { useBottomSheet } from "../utils/hooks/useBottomSheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-
-interface LoadingStates {
-  [key: string]: boolean;
-}
+import { subscribeToApplicants } from "../firebase/firebase.subscribtion";
 
 const Dashboard = () => {
   const [applicants, setApplicants] = useState<DocumentData[]>([]);
@@ -39,18 +32,6 @@ const Dashboard = () => {
     return () => usubscribe();
   }, []);
 
-  const approveOrRejectApplicants = async (uid: string, status: string) => {
-    try {
-      await rejectOrApproveApplicants(uid, status);
-    } catch (error: any) {
-      console.log(error);
-      Alert.alert(
-        "Error",
-        "Something went wrong, please try again later",
-        error.message
-      );
-    }
-  };
   return (
     <GestureHandlerRootView style={styles.root}>
       <FlashList
@@ -100,14 +81,16 @@ const Dashboard = () => {
               <Button
                 textStyle={styles.btnTxt}
                 style={[styles.rejectBtn, styles.btn]}
-                onPress={() => approveOrRejectApplicants(item.uid, "Rejected")}
+                // onPress={() => approveOrRejectApplicants(item.uid, "Rejected")}
+                onPress={() => approve(item.uid, "Rejected")}
               >
                 Reject
               </Button>
               <Button
                 style={styles.btn}
                 textStyle={styles.btnTxt}
-                onPress={() => approveOrRejectApplicants(item.uid, "Approved")}
+                // onPress={() => approveOrRejectApplicants(item.uid, "Approved")}
+                onPress={() => approve(item.uid, "Approved")}
               >
                 Approve
               </Button>
@@ -116,6 +99,7 @@ const Dashboard = () => {
         )}
         estimatedItemSize={100}
       />
+
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
@@ -167,10 +151,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.error,
   },
   btnTxt: {
-    fontSize: 19,
+    fontSize: 15,
   },
   btn: {
-    width: 150,
+    width: 120,
+    padding: 10,
   },
   logo: {
     width: 50,

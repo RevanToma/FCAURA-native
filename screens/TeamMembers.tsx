@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "../constants/Colors";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -9,8 +9,8 @@ import Button from "../components/common/Buttons/Button";
 import { useBottomSheet } from "../utils/hooks/useBottomSheet";
 import TeamMemberProfileCard from "../components/TeamMemberProfileCard/TeamMemberProfileCard";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { subscribeToTeamMembers } from "../firebase/firebase.utils";
 import { DocumentData } from "firebase/firestore";
+import { subscribeToTeamMembers } from "../firebase/firebase.subscribtion";
 
 const TeamMembers = ({ navigation }: any) => {
   useEffect(() => {
@@ -19,7 +19,7 @@ const TeamMembers = ({ navigation }: any) => {
     });
   });
   const [teamMembers, setTeamMembers] = useState<DocumentData[]>([]);
-
+  const [loading, setLoading] = useState(true);
   const {
     bottomSheetRef,
     closeBottomSheet,
@@ -38,6 +38,7 @@ const TeamMembers = ({ navigation }: any) => {
   useEffect(() => {
     const unsubscribe = subscribeToTeamMembers((newMembers) => {
       setTeamMembers(newMembers);
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -47,62 +48,68 @@ const TeamMembers = ({ navigation }: any) => {
   //    : require("../assets/images/avatar.jpg");
 
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <FlashList
-        data={teamMembers}
-        keyExtractor={(item) => item.uid}
-        renderItem={({ item }) => (
-          <View style={styles.memberCard}>
-            <Image
-              style={styles.memberImage}
-              source={
-                item.photoURL
-                  ? { uri: item.photoURL }
-                  : require("../assets/images/avatar.jpg")
-              }
-            />
+    <GestureHandlerRootView style={[styles.root, { justifyContent: "center" }]}>
+      {loading ? (
+        <ActivityIndicator size="large" color={Colors.yellow} />
+      ) : (
+        <>
+          <FlashList
+            data={teamMembers}
+            keyExtractor={(item) => item.uid}
+            renderItem={({ item }) => (
+              <View style={styles.memberCard}>
+                <Image
+                  style={styles.memberImage}
+                  source={
+                    item.photoURL
+                      ? { uri: item.photoURL }
+                      : require("../assets/images/avatar.jpg")
+                  }
+                />
 
-            <Text style={styles.memberName}>{formatName(item.name)}</Text>
-            <View style={styles.skillsContainer}>
-              {item.skills.map((skill: string, index: number) => (
-                <Text key={index} style={styles.skill}>
-                  {skill}
-                </Text>
-              ))}
-            </View>
-            <Button
-              textStyle={styles.btnText}
-              style={styles.profileButton}
-              onPress={() => openTeamMemberProfile(item.uid)}
-            >
-              See Profile
-            </Button>
-          </View>
-        )}
-        estimatedItemSize={160}
-      />
+                <Text style={styles.memberName}>{formatName(item.name)}</Text>
+                <View style={styles.skillsContainer}>
+                  {item.skills.map((skill: string, index: number) => (
+                    <Text key={index} style={styles.skill}>
+                      {skill}
+                    </Text>
+                  ))}
+                </View>
+                <Button
+                  textStyle={styles.btnText}
+                  style={styles.profileButton}
+                  onPress={() => openTeamMemberProfile(item.uid)}
+                >
+                  See Profile
+                </Button>
+              </View>
+            )}
+            estimatedItemSize={160}
+          />
 
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        index={-1}
-        enablePanDownToClose={true}
-        handleIndicatorStyle={{
-          backgroundColor: Colors.alternative,
+          <BottomSheet
+            ref={bottomSheetRef}
+            snapPoints={snapPoints}
+            index={-1}
+            enablePanDownToClose={true}
+            handleIndicatorStyle={{
+              backgroundColor: Colors.alternative,
 
-          width: 40,
-          height: 5,
-          borderRadius: 5,
-        }}
-        backgroundStyle={{
-          backgroundColor: Colors.yellow,
-        }}
-        onClose={afterCloseResetContent}
-      >
-        <BottomSheetScrollView style={styles.contentContainer}>
-          {ContentComponent}
-        </BottomSheetScrollView>
-      </BottomSheet>
+              width: 40,
+              height: 5,
+              borderRadius: 5,
+            }}
+            backgroundStyle={{
+              backgroundColor: Colors.yellow,
+            }}
+            onClose={afterCloseResetContent}
+          >
+            <BottomSheetScrollView style={styles.contentContainer}>
+              {ContentComponent}
+            </BottomSheetScrollView>
+          </BottomSheet>
+        </>
+      )}
     </GestureHandlerRootView>
   );
 };

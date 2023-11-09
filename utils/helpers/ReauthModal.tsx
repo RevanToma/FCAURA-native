@@ -7,9 +7,10 @@ type ReauthProps = {
   isVisible: boolean;
   onConfirm: (password: string) => void;
   onCancel: () => void;
+  text: string;
 };
 
-const ReauthModal = ({ isVisible, onConfirm, onCancel }: ReauthProps) => {
+const ReauthModal = ({ isVisible, onConfirm, onCancel, text }: ReauthProps) => {
   const [password, setPassword] = useState("");
 
   const isValid = password.toString().trim().length >= 8;
@@ -17,9 +18,8 @@ const ReauthModal = ({ isVisible, onConfirm, onCancel }: ReauthProps) => {
   return (
     <Modal visible={isVisible} animationType="slide" transparent>
       <View style={styles.root}>
-        <Text style={styles.text}>
-          Please enter ur current password to confirm.
-        </Text>
+        <Text style={styles.text}>{text}</Text>
+
         <Input
           label="Current password"
           keyboardType="default"
@@ -29,6 +29,7 @@ const ReauthModal = ({ isVisible, onConfirm, onCancel }: ReauthProps) => {
           value={password}
           isInvalid={!isValid}
         />
+
         <Button style={styles.btn} onPress={() => onConfirm(password)}>
           Confirm
         </Button>

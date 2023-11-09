@@ -114,6 +114,7 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
       />
 
       <ReauthModal
+        text="Please enter your password to confirm the change"
         isVisible={isReauthModalVisible}
         onConfirm={handleReauthentication}
         onCancel={() => setIsReauthModalVisible(false)}

@@ -1,4 +1,5 @@
-import { Linking } from "react-native";
+import { Alert, Linking } from "react-native";
+import { rejectOrApproveApplicants } from "../../firebase/firebase.utils";
 
 export const preDefinedSkills: string[] = [
   "Dribbling", // Dribbling remains similar in many languages
@@ -60,4 +61,43 @@ export const openURL = (url: string) => {
       console.log("Don't know how to open URI: " + formattedURL);
     }
   });
+};
+
+const approveOrRejectApplicants = async (uid: string, status: string) => {
+  try {
+    await rejectOrApproveApplicants(uid, status);
+  } catch (error: any) {
+    console.log(error);
+    Alert.alert(
+      "Error",
+      "Something went wrong, please try again later",
+      error.message
+    );
+  }
+};
+
+export const approve = (uid: string, status: string) => {
+  if (status === "Approved") {
+    Alert.alert("Are you sure you want to", "Approve this applicant?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Approve",
+        onPress: () => approveOrRejectApplicants(uid, "Approved"),
+      },
+    ]);
+  } else {
+    Alert.alert("Are you sure you want to", "Reject this applicant?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Reject",
+        onPress: () => approveOrRejectApplicants(uid, "Rejected"),
+      },
+    ]);
+  }
 };
