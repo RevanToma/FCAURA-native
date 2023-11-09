@@ -11,6 +11,7 @@ import TeamMemberProfileCard from "../components/TeamMemberProfileCard/TeamMembe
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { DocumentData } from "firebase/firestore";
 import { subscribeToTeamMembers } from "../firebase/firebase.subscribtion";
+import ImageWithFallback from "../utils/helpers/ImageWithFallback";
 
 const TeamMembers = ({ navigation }: any) => {
   useEffect(() => {
@@ -43,9 +44,6 @@ const TeamMembers = ({ navigation }: any) => {
 
     return () => unsubscribe();
   }, []);
-  //  const userPorfileImage = user.photoURL
-  //    ? { uri: user.photoURL }
-  //    : require("../assets/images/avatar.jpg");
 
   return (
     <GestureHandlerRootView style={[styles.root, { justifyContent: "center" }]}>
@@ -58,15 +56,12 @@ const TeamMembers = ({ navigation }: any) => {
             keyExtractor={(item) => item.uid}
             renderItem={({ item }) => (
               <View style={styles.memberCard}>
-                <Image
+                <ImageWithFallback
+                  uri={item.photoURL}
                   style={styles.memberImage}
-                  source={
-                    item.photoURL
-                      ? { uri: item.photoURL }
-                      : require("../assets/images/avatar.jpg")
-                  }
+                  iconSize={50}
+                  iconColor="white"
                 />
-
                 <Text style={styles.memberName}>{formatName(item.name)}</Text>
                 <View style={styles.skillsContainer}>
                   {item.skills.map((skill: string, index: number) => (

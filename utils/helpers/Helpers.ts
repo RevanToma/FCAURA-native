@@ -48,7 +48,8 @@ export const getButtonLabel = (
 
 export const openURL = (url: string) => {
   if (!url || url.trim() === "") {
-    console.log("Instagram username is empty or not provided");
+    Alert.alert("User has not provided Instagram username.");
+
     return;
   }
 

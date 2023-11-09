@@ -13,6 +13,7 @@ import { fetchUserFromFirebase } from "../../firebase/firebase.utils";
 import { DocumentData } from "firebase/firestore";
 import { Colors } from "../../constants/Colors";
 import { formatName, openURL } from "../../utils/helpers/Helpers";
+import ImageWithFallback from "../../utils/helpers/ImageWithFallback";
 
 type Props = {
   onClose?: () => void;
@@ -49,7 +50,12 @@ const TeamMemberProfileCard: React.FC<Props> = ({ uid }) => {
             style={styles.logo}
           />
           <View style={styles.avatarContainer}>
-            <Image source={userPorfileImage} style={styles.avatar} />
+            <ImageWithFallback
+              uri={profileData?.photoURL}
+              style={styles.avatar}
+              iconSize={50}
+              iconColor="white"
+            />
           </View>
           <Text style={[styles.text, styles.nameTxt]}>
             {formatName(profileData?.name)}

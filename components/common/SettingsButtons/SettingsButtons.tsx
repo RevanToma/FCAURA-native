@@ -7,6 +7,7 @@ type SettingsButtonsProps = {
   onPress: () => void;
   icon?: string;
 };
+
 const SettingsButtons: React.FC<SettingsButtonsProps> = ({
   children,
   onPress,

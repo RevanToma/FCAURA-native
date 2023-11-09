@@ -14,6 +14,7 @@ import ChangeEmail from "../components/ChangeEmail-ChangePassword/ChangeEmail";
 import { useBottomSheet } from "../utils/hooks/useBottomSheet";
 import { formatName } from "../utils/helpers/Helpers";
 import ChangePassword from "../components/ChangeEmail-ChangePassword/ChangePassword";
+import ImageWithFallback from "../utils/helpers/ImageWithFallback";
 
 export type SettingsStackParamList = {
   SettingsMain: undefined;
@@ -59,21 +60,21 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
     openBottomSheetWithContent(<ChangePassword onClose={closeBottomSheet} />);
   };
 
-  const userPorfileImage = user.photoURL
-    ? { uri: user.photoURL }
-    : require("../assets/images/avatar.jpg");
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.alternative }}>
       <GestureHandlerRootView style={styles.root}>
         <View style={styles.hero}>
-          <Image
-            source={userPorfileImage}
+          <ImageWithFallback
+            uri={user.photoURL}
             style={{
               width: 50,
               height: 50,
               borderRadius: 25,
             }}
+            iconSize={40}
+            iconColor="white"
           />
+
           <View>
             <Text style={styles.heroEmail}>{user.email}</Text>
             <Text style={styles.txt}>{formatName(user.name)}</Text>
@@ -117,7 +118,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
                   Admin Panel
                 </Text>
                 <SettingsButtons
-                  icon="color-wand-outline"
+                  icon="desktop-outline"
                   onPress={() => handleNavigationButton("Dashboard")}
                 >
                   Dashboard
