@@ -123,11 +123,6 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ onClose }) => {
       <Button onPress={handleSave} style={styles.btn} isLoading={isLoading}>
         Save
       </Button>
-      {Platform.OS === "android" && (
-        <Button style={styles.btn} onPress={onClose}>
-          Close
-        </Button>
-      )}
     </View>
   );
 };

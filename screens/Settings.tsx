@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 
 import { Colors } from "../constants/Colors";
 import Button from "../components/common/Buttons/Button";
@@ -61,100 +61,111 @@ const Settings: React.FC<SettingsProps> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: Colors.alternative }}>
-      <GestureHandlerRootView style={styles.root}>
-        <View style={styles.hero}>
-          <ImageWithFallback
-            uri={user.photoURL}
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 25,
-            }}
-            iconSize={40}
-            iconColor="white"
-          />
+    <GestureHandlerRootView style={styles.root}>
+      <ScrollView style={{ width: "100%" }}>
+        <View
+          style={{
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.hero}>
+            <ImageWithFallback
+              uri={user.photoURL}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 25,
+              }}
+              iconSize={40}
+              iconColor="white"
+            />
 
-          <View>
-            <Text style={styles.heroEmail}>{user.email}</Text>
-            <Text style={styles.txt}>{formatName(user.name)}</Text>
+            <View>
+              <Text style={styles.heroEmail}>{user.email}</Text>
+              <Text style={styles.txt}>{formatName(user.name)}</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.btnContainer}>
-          <Text style={styles.txt}>Account</Text>
-          <View>
-            <SettingsButtons icon="mail-outline" onPress={openChangeEmail}>
-              Change Email
-            </SettingsButtons>
-          </View>
-          <View>
-            <SettingsButtons
-              icon="lock-closed-outline"
-              onPress={openChangePassword}
-            >
-              Change Password
-            </SettingsButtons>
-
-            <Text style={[styles.txt, { marginTop: 40 }]}>Profile</Text>
-            <View style={{ marginVertical: 20 }}>
-              <SettingsButtons
-                icon="person-circle-outline"
-                onPress={() => handleNavigationButton("ChangeProfileInfo")}
-              >
-                Change Profile info
+          <View style={styles.btnContainer}>
+            <Text style={styles.txt}>Account</Text>
+            <View>
+              <SettingsButtons icon="mail-outline" onPress={openChangeEmail}>
+                Change Email
               </SettingsButtons>
             </View>
             <View>
               <SettingsButtons
-                icon="color-wand-outline"
-                onPress={() => handleNavigationButton("ChangeSkills")}
+                icon="lock-closed-outline"
+                onPress={openChangePassword}
               >
-                Change / Add Skills
+                Change Password
               </SettingsButtons>
-            </View>
-            {user.role === "Admin" && (
-              <View style={{ marginTop: 20 }}>
-                <Text style={[styles.txt, { marginVertical: 20 }]}>
-                  Admin Panel
-                </Text>
+
+              <Text style={[styles.txt, { marginTop: 40 }]}>Profile</Text>
+              <View style={{ marginVertical: 20 }}>
                 <SettingsButtons
-                  icon="desktop-outline"
-                  onPress={() => handleNavigationButton("Dashboard")}
+                  icon="person-circle-outline"
+                  onPress={() => handleNavigationButton("ChangeProfileInfo")}
                 >
-                  Dashboard
+                  Change Profile info
                 </SettingsButtons>
               </View>
-            )}
+              <View>
+                <SettingsButtons
+                  icon="color-wand-outline"
+                  onPress={() => handleNavigationButton("ChangeSkills")}
+                >
+                  Change / Add Skills
+                </SettingsButtons>
+              </View>
+              {user.role === "Admin" && (
+                <View style={{ marginTop: 20 }}>
+                  <Text style={[styles.txt, { marginVertical: 20 }]}>
+                    Admin Panel
+                  </Text>
+                  <SettingsButtons
+                    icon="desktop-outline"
+                    onPress={() => handleNavigationButton("Dashboard")}
+                  >
+                    Dashboard
+                  </SettingsButtons>
+                </View>
+              )}
+            </View>
           </View>
+
+          <Button
+            onPress={handleLogout}
+            style={{
+              backgroundColor: Colors.error,
+              marginTop: 50,
+            }}
+          >
+            Log out
+          </Button>
+
+          <BottomSheet
+            ref={bottomSheetRef}
+            snapPoints={snapPoints}
+            index={-1}
+            enablePanDownToClose={true}
+            handleIndicatorStyle={{
+              backgroundColor: Colors.alternative,
+              width: 40,
+              height: 5,
+              borderRadius: 5,
+            }}
+            backgroundStyle={{
+              backgroundColor: Colors.yellow,
+            }}
+            onClose={afterCloseResetContent}
+          >
+            <View style={styles.contentContainer}>{ContentComponent}</View>
+          </BottomSheet>
         </View>
-
-        <Button
-          onPress={handleLogout}
-          style={{ backgroundColor: Colors.error, marginTop: 50 }}
-        >
-          Log out
-        </Button>
-
-        <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={snapPoints}
-          index={-1}
-          enablePanDownToClose={true}
-          handleIndicatorStyle={{
-            backgroundColor: Colors.alternative,
-            width: 40,
-            height: 5,
-            borderRadius: 5,
-          }}
-          backgroundStyle={{
-            backgroundColor: Colors.yellow,
-          }}
-          onClose={afterCloseResetContent}
-        >
-          <View style={styles.contentContainer}>{ContentComponent}</View>
-        </BottomSheet>
-      </GestureHandlerRootView>
-    </ScrollView>
+      </ScrollView>
+    </GestureHandlerRootView>
   );
 };
 

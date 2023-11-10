@@ -53,6 +53,7 @@ const ChangeProfileInfo = ({ navigation }: SettingsProps) => {
     <ScrollView style={styles.root}>
       <View style={{ alignItems: "center" }}>
         <ImagePicker />
+
         <Input
           label="Bio"
           keyboardType="default"
