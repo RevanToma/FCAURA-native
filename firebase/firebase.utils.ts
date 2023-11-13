@@ -16,12 +16,14 @@ import {
 import { ProfileData } from "../screens/SetupProfile";
 import {
   DocumentData,
+  addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
   onSnapshot,
   query,
+  serverTimestamp,
   setDoc,
   updateDoc,
   where,
@@ -327,5 +329,22 @@ export const rejectOrApproveApplicants = async (
     });
   } catch (error: any) {
     console.error("Error updating document: ", error);
+  }
+};
+
+export const sendMessage = async (
+  text: string,
+  senderId: string,
+  photoURL: string
+) => {
+  try {
+    await addDoc(collection(db, "messages"), {
+      text,
+      senderId,
+      timestamp: serverTimestamp(),
+      photoURL: photoURL,
+    });
+  } catch (error) {
+    console.error("Error sending message: ", error);
   }
 };
