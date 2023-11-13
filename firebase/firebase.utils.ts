@@ -30,10 +30,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase.auth";
 import { Alert } from "react-native";
-import { User } from "../types";
-import { useSelector } from "react-redux";
-import { IMessage } from "react-native-gifted-chat";
-import { MyMessage } from "../screens/Chat";
+import { MyMessage, User } from "../types";
 
 type Auth = {
   mode?: "signUp" | "signInWithPassword";
@@ -335,7 +332,7 @@ export const rejectOrApproveApplicants = async (
   }
 };
 
-export const sendMessage = async (messageData: any) => {
+export const sendMessage = async (messageData: DocumentData) => {
   try {
     await addDoc(collection(db, "messages"), {
       text: messageData.text,

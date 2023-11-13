@@ -1,11 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, Keyboard, Text, Platform } from "react-native";
 import { Colors } from "../constants/Colors";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { subscribeToMessages } from "../firebase/firebase.subscribtion";
@@ -13,6 +6,7 @@ import { DocumentData } from "firebase/firestore";
 import { sendMessage } from "../firebase/firebase.utils";
 import { auth } from "../firebase/firebase.auth";
 import {
+  Bubble,
   BubbleProps,
   GiftedChat,
   IMessage,
@@ -28,14 +22,8 @@ import {
   GestureHandlerRootView,
   Swipeable,
 } from "react-native-gesture-handler";
-import IconButton from "../components/common/Buttons/IconButton";
+import { MyMessage } from "../types";
 
-export type MyMessage = IMessage & {
-  replyMessage?: {
-    text: string;
-    userName: string;
-  };
-};
 const Chat = () => {
   const reduxUser = useSelector(selectUser);
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -133,12 +121,32 @@ const Chat = () => {
           <Text style={{ color: "white", marginVertical: 10 }}>
             {props.currentMessage.replyMessage.text}
           </Text>
-          <View style={styles.replyMsgDivider} />
         </View>
       );
     }
   };
+  const renderBubble = (props: BubbleProps<MyMessage>) => {
+    return (
+      <Bubble
+        wrapperStyle={{
+          left: {
+            backgroundColor: "#283238",
+          },
+        }}
+        textStyle={{
+          left: {
+            color: Colors.white,
+          },
+        }}
+        {...props}
+      ></Bubble>
+    );
+  };
 
+  // const renderProfileOnLongPress = (uid: string) => {
+  //   console.log(uid);
+  //   return <TeamMemberProfileCard uid={uid} />;
+  // };
   useEffect(() => {
     if (replyToMessage && swipeAbleRowRef.current) {
       swipeAbleRowRef.current.close();
@@ -150,7 +158,9 @@ const Chat = () => {
     <GestureHandlerRootView style={styles.root}>
       <GiftedChat
         renderUsernameOnMessage
-        onLongPress={(_, message) => setReplyToMessage(message)}
+        // onLongPress={(_, message) =>
+        //   renderProfileOnLongPress(message.user._id.toString())
+        // }
         messages={messages}
         onSend={(messages) => handleSend(messages)}
         user={{
@@ -164,6 +174,7 @@ const Chat = () => {
         renderMessage={renderMessageBox}
         renderCustomView={renderReplyMessageView}
         bottomOffset={Platform.OS === "ios" && !replyToMessage ? 130 : 80}
+        renderBubble={renderBubble}
       />
     </GestureHandlerRootView>
   );
@@ -189,17 +200,14 @@ const styles = StyleSheet.create({
   msgContainer: { flex: 1 },
   replyMsgContainer: {
     padding: 8,
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderColor: Colors.yellow,
     borderTopEndRadius: 8,
     borderTopLeftRadius: 8,
     borderBottom: 1,
+    backgroundColor: "#283238",
+  },
 
-    backgroundColor: Colors.alternative,
-  },
-  replyMsgDivider: {
-    paddingTop: 6,
-  },
   sendbtn: {
     transform: [{ rotate: "-45deg" }],
     alignSelf: "center",

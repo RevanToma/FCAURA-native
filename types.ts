@@ -1,4 +1,5 @@
 import { DocumentData } from "firebase/firestore";
+import { IMessage } from "react-native-gifted-chat";
 export type NotAuthenticatedStackParamList = {
   Home: undefined;
   "Team Members": undefined;
@@ -55,4 +56,11 @@ export type NotAuthenticatedNavigatorProps = {
 
 export type FirebaseDocumentData = {
   DocumentData: DocumentData;
+};
+
+export type MyMessage = IMessage & {
+  replyMessage?: {
+    text: string;
+    userName: string;
+  };
 };

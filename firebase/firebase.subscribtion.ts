@@ -7,8 +7,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "./firebase.auth";
-import { IMessage } from "react-native-gifted-chat";
-import { MyMessage } from "../screens/Chat";
+import { MyMessage } from "../types";
 
 export const subscribeToTeamMembers = (
   callback: (members: DocumentData[]) => void

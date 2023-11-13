@@ -1,7 +1,5 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { MyMessage } from "../../../screens/Chat";
-import { DocumentData } from "firebase/firestore";
 
 type IconButtonProps = {
   icon: typeof Ionicons.defaultProps.name;
