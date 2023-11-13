@@ -102,3 +102,12 @@ export const approve = (uid: string, status: string) => {
     ]);
   }
 };
+export const getColorForUsername = (userId: string) => {
+  // Simple hashing function or any method to generate a unique color
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const color = `hsl(${hash % 360}, 80%, 60%)`;
+  return color;
+};

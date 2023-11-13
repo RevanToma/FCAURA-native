@@ -8,6 +8,7 @@ import { auth } from "../firebase/firebase.auth";
 import {
   Bubble,
   BubbleProps,
+  Composer,
   GiftedChat,
   IMessage,
   InputToolbar,
@@ -23,6 +24,109 @@ import {
   Swipeable,
 } from "react-native-gesture-handler";
 import { MyMessage } from "../types";
+import { getColorForUsername } from "../utils/helpers/Helpers";
+
+const renderCustomInputToolBar = (props: InputToolbarProps<any>) => {
+  return (
+    <InputToolbar
+      {...props}
+      containerStyle={styles.inputContainer}
+      renderComposer={(composerProps) => (
+        <Composer
+          {...composerProps}
+          textInputStyle={{ color: "#fff" }}
+          keyboardAppearance="dark"
+        />
+      )}
+      accessoryStyle={styles.replyBarContainer}
+    />
+  );
+};
+
+const renderAccessory = (
+  replyToMessage: MyMessage,
+  clearReplyMessage: () => void
+) => {
+  if (replyToMessage) {
+    return (
+      <ReplyMessageBar
+        message={replyToMessage}
+        clearReply={clearReplyMessage}
+      />
+    );
+  }
+};
+const renderMessageBox = (
+  setReplyToMessage: (message: IMessage) => void,
+  updateRowRef: (ref: any) => void
+) => {
+  return (props: MessageProps<IMessage>) => {
+    return (
+      <ChatMessageBox
+        setReplyOnSwipeOpen={setReplyToMessage}
+        {...props}
+        updateRowRef={updateRowRef}
+      />
+    );
+  };
+};
+
+const renderBubble = (props: BubbleProps<MyMessage>) => {
+  return (
+    <Bubble
+      wrapperStyle={{
+        left: {
+          backgroundColor: "#283238",
+          marginVertical: 3,
+        },
+        right: {
+          marginVertical: 3,
+          marginRight: 5,
+        },
+      }}
+      textStyle={{
+        left: {
+          color: Colors.white,
+        },
+      }}
+      {...props}
+    ></Bubble>
+  );
+};
+
+const renderReplyMessageView = (props: BubbleProps<MyMessage>) => {
+  if (props.currentMessage && props.currentMessage.replyMessage) {
+    return (
+      <View style={styles.replyMsgContainer}>
+        <Text style={{ color: Colors.yellow, fontWeight: "bold" }}>
+          {props.currentMessage.replyMessage.userName}
+        </Text>
+        <Text style={{ color: "white", marginVertical: 10 }}>
+          {props.currentMessage.replyMessage.text}
+        </Text>
+      </View>
+    );
+  }
+};
+
+const renderUsername = (props: any) => {
+  if (props._id) {
+    const usernameColor = getColorForUsername(props._id);
+    return (
+      <Text
+        {...props}
+        style={{
+          color: usernameColor,
+          margin: 5,
+          fontSize: 12,
+        }}
+      >
+        ~ {props.name}
+      </Text>
+    );
+  }
+  return null;
+};
 
 const Chat = () => {
   const reduxUser = useSelector(selectUser);
@@ -50,103 +154,40 @@ const Chat = () => {
     [replyToMessage]
   );
 
-  const handleSend = async (newMessages: DocumentData[]) => {
-    if (replyToMessage) {
-      newMessages[0].replyMessage = {
-        text: replyToMessage.text,
-        userName: replyToMessage.user.name,
+  const handleSend = useCallback(
+    async (newMessages: DocumentData[]) => {
+      if (replyToMessage) {
+        newMessages[0].replyMessage = {
+          text: replyToMessage.text,
+          userName: replyToMessage.user.name,
+        };
+      }
+      const messageToSend = {
+        _id: newMessages[0]._id,
+        text: newMessages[0].text,
+        createdAt: newMessages[0].createdAt,
+        user: {
+          _id: auth.currentUser?.uid!,
+          name: reduxUser?.name,
+          avatar: reduxUser?.photoURL,
+        },
+        replyMessage: replyToMessage
+          ? { text: replyToMessage.text, userName: replyToMessage.user.name }
+          : null,
       };
-    }
-    const messageToSend = {
-      _id: newMessages[0]._id,
-      text: newMessages[0].text,
-      createdAt: newMessages[0].createdAt,
-      user: {
-        _id: auth.currentUser?.uid!,
-        name: reduxUser?.name,
-        avatar: reduxUser?.photoURL,
-      },
-      replyMessage: replyToMessage
-        ? { text: replyToMessage.text, userName: replyToMessage.user.name }
-        : null,
-    };
 
-    await sendMessage(messageToSend);
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, [messageToSend])
-    );
-    setReplyToMessage(null);
+      await sendMessage(messageToSend);
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, [messageToSend])
+      );
+      setReplyToMessage(null);
 
-    Keyboard.dismiss();
-  };
+      Keyboard.dismiss();
+    },
+    [replyToMessage]
+  );
 
   const clearReplyMessage = () => setReplyToMessage(null);
-
-  const renderCustomInputToolBar = (props: InputToolbarProps<any>) => {
-    return (
-      <InputToolbar
-        {...props}
-        containerStyle={styles.inputContainer}
-        accessoryStyle={styles.replyBarContainer}
-      />
-    );
-  };
-  const renderAccessory = () => {
-    if (replyToMessage) {
-      return (
-        <ReplyMessageBar
-          message={replyToMessage}
-          clearReply={clearReplyMessage}
-        />
-      );
-    }
-  };
-  const renderMessageBox = (props: MessageProps<IMessage>) => {
-    return (
-      <ChatMessageBox
-        setReplyOnSwipeOpen={setReplyToMessage}
-        {...props}
-        updateRowRef={updateRowRef}
-      />
-    );
-  };
-
-  const renderReplyMessageView = (props: BubbleProps<MyMessage>) => {
-    if (props.currentMessage && props.currentMessage.replyMessage) {
-      return (
-        <View style={styles.replyMsgContainer}>
-          <Text style={{ color: Colors.yellow, fontWeight: "bold" }}>
-            {props.currentMessage.replyMessage.userName}
-          </Text>
-          <Text style={{ color: "white", marginVertical: 10 }}>
-            {props.currentMessage.replyMessage.text}
-          </Text>
-        </View>
-      );
-    }
-  };
-  const renderBubble = (props: BubbleProps<MyMessage>) => {
-    return (
-      <Bubble
-        wrapperStyle={{
-          left: {
-            backgroundColor: "#283238",
-            marginVertical: 3,
-          },
-          right: {
-            marginVertical: 3,
-            marginRight: 5,
-          },
-        }}
-        textStyle={{
-          left: {
-            color: Colors.white,
-          },
-        }}
-        {...props}
-      ></Bubble>
-    );
-  };
 
   // const renderProfileOnLongPress = (uid: string) => {
   //   console.log(uid);
@@ -163,6 +204,7 @@ const Chat = () => {
     <GestureHandlerRootView style={styles.root}>
       <GiftedChat
         renderUsernameOnMessage
+        renderUsername={renderUsername}
         // onLongPress={(_, message) =>
         //   renderProfileOnLongPress(message.user._id.toString())
         // }
@@ -175,8 +217,10 @@ const Chat = () => {
         }}
         showAvatarForEveryMessage={true}
         renderInputToolbar={renderCustomInputToolBar}
-        renderAccessory={renderAccessory}
-        renderMessage={renderMessageBox}
+        renderAccessory={() =>
+          replyToMessage && renderAccessory(replyToMessage, clearReplyMessage)
+        }
+        renderMessage={renderMessageBox(setReplyToMessage, updateRowRef)}
         renderCustomView={renderReplyMessageView}
         bottomOffset={Platform.OS === "ios" && !replyToMessage ? 130 : 80}
         renderBubble={renderBubble}
@@ -197,6 +241,7 @@ const styles = StyleSheet.create({
     position_: "relative",
     flexDirection: "column-reverse",
     justifyContent: "center",
+    backgroundColor: "#283238",
   },
 
   replyBarContainer: {
@@ -211,12 +256,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderBottom: 1,
     backgroundColor: "#283238",
-  },
-
-  sendbtn: {
-    transform: [{ rotate: "-45deg" }],
-    alignSelf: "center",
-    marginVertical: 10,
   },
 });
 
