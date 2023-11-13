@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -17,6 +16,7 @@ import { useAppDispatch } from "../utils/hooks/useDispatch";
 import { signUpUser } from "../store/user/userSlice";
 import { useForm, Controller } from "react-hook-form";
 import Button from "../components/common/Buttons/Button";
+import Spinner from "react-native-loading-spinner-overlay";
 
 type FormData = {
   email: string;
@@ -49,17 +49,7 @@ const SignUp = ({ navigation }: any) => {
   };
 
   if (isLoading) {
-    return (
-      <ActivityIndicator
-        size="large"
-        color={Colors.yellow}
-        style={{
-          justifyContent: "center",
-          height: "100%",
-          backgroundColor: Colors.alternative,
-        }}
-      />
-    );
+    return <Spinner visible={isLoading} color={Colors.yellow} />;
   }
   return (
     <View style={styles.root}>

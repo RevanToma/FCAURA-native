@@ -15,11 +15,11 @@ const ReplyMessageBar = ({ clearReply, message }: ReplyMessageBarProps) => {
       </View>
 
       <View style={styles.msgContainer}>
-        <Text>{message?.text}</Text>
+        <Text style={{ color: "#fff" }}>{message?.text}</Text>
       </View>
 
       <TouchableOpacity onPress={clearReply} style={styles.xBtn}>
-        <Ionicons name="close-circle-outline" size={25} />
+        <Ionicons name="close-circle-outline" size={25} color="#fff" />
       </TouchableOpacity>
     </View>
   );
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
 
     paddingVertical: 8,
+    backgroundColor: "#283238",
 
     height: 50,
   },

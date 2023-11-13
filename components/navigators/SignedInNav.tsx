@@ -11,6 +11,7 @@ import IconButton from "../common/Buttons/IconButton";
 import Chat from "../../screens/Chat";
 import SettingsStackNavigator from "./SettingsStackNavigator";
 import { NotAuthenticatedNavigatorProps } from "../../types";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const Tab = createBottomTabNavigator<NotAuthenticatedNavigatorProps>();
 
@@ -20,7 +21,7 @@ const SignedInNavigator = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   if (isLoading) {
-    return <ActivityIndicator size="large" color={Colors.yellow} />;
+    return <Spinner visible={isLoading} color={Colors.yellow} />;
   }
   return (
     <Tab.Navigator

@@ -1,13 +1,11 @@
 import {
   Image,
-  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { useState } from "react";
 import { Colors } from "../constants/Colors";

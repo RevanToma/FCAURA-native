@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, ScrollView, StyleSheet } from "react-native";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { SettingsProps } from "./Settings";
 import { useAppDispatch } from "../utils/hooks/useDispatch";
@@ -14,6 +14,7 @@ import {
 import SelectedSkills from "../components/SelectedSkills/SelectedSkills";
 import SkillPicker from "../components/SelectedSkills/SkillPicker";
 import { preDefinedSkills } from "../utils/helpers/Helpers";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const ChangeSkills = ({ navigation }: SettingsProps) => {
   const dispatch = useAppDispatch();
@@ -45,29 +46,17 @@ const ChangeSkills = ({ navigation }: SettingsProps) => {
   };
   return (
     <ScrollView style={styles.container}>
-      {isSubmitting ? (
-        <ActivityIndicator
-          size={100}
-          color={Colors.yellow}
-          style={{ marginBottom: 20, justifyContent: "center" }}
-        />
-      ) : (
-        <>
-          <SelectedSkills
-            skills={user.skills}
-            onRemoveSkill={removeSkillHandler}
-          />
+      <Spinner visible={isSubmitting} color={Colors.yellow} />
+      <SelectedSkills skills={user.skills} onRemoveSkill={removeSkillHandler} />
 
-          <SkillPicker
-            profileCompleted={user.completedProfileSetup}
-            predefinedSkills={preDefinedSkills}
-            onSkillSelected={addSkillHandler}
-            onAddSkill={addSkillHandler}
-            handleSubmit={handleSubmit}
-            isTeammember={user.teamMember}
-          />
-        </>
-      )}
+      <SkillPicker
+        profileCompleted={user.completedProfileSetup}
+        predefinedSkills={preDefinedSkills}
+        onSkillSelected={addSkillHandler}
+        onAddSkill={addSkillHandler}
+        handleSubmit={handleSubmit}
+        isTeammember={user.teamMember}
+      />
     </ScrollView>
   );
 };

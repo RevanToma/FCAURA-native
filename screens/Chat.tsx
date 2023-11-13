@@ -131,6 +131,11 @@ const Chat = () => {
         wrapperStyle={{
           left: {
             backgroundColor: "#283238",
+            marginVertical: 3,
+          },
+          right: {
+            marginVertical: 3,
+            marginRight: 5,
           },
         }}
         textStyle={{

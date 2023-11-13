@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "../constants/Colors";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { DocumentData } from "firebase/firestore";
 import { subscribeToTeamMembers } from "../firebase/firebase.subscribtion";
 import ImageWithFallback from "../utils/helpers/ImageWithFallback";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const TeamMembers = ({ navigation }: any) => {
   useEffect(() => {
@@ -47,64 +48,59 @@ const TeamMembers = ({ navigation }: any) => {
 
   return (
     <GestureHandlerRootView style={[styles.root, { justifyContent: "center" }]}>
-      {loading ? (
-        <ActivityIndicator size="large" color={Colors.yellow} />
-      ) : (
-        <>
-          <FlashList
-            data={teamMembers}
-            keyExtractor={(item) => item.uid}
-            renderItem={({ item }) => (
-              <View style={styles.memberCard}>
-                <ImageWithFallback
-                  uri={item.photoURL}
-                  style={styles.memberImage}
-                  iconSize={50}
-                  iconColor="white"
-                />
-                <Text style={styles.memberName}>{formatName(item.name)}</Text>
-                <View style={styles.skillsContainer}>
-                  {item.skills.map((skill: string, index: number) => (
-                    <Text key={index} style={styles.skill}>
-                      {skill}
-                    </Text>
-                  ))}
-                </View>
-                <Button
-                  textStyle={styles.btnText}
-                  style={styles.profileButton}
-                  onPress={() => openTeamMemberProfile(item.uid)}
-                >
-                  See Profile
-                </Button>
-              </View>
-            )}
-            estimatedItemSize={160}
-          />
+      <Spinner visible={loading} color={Colors.yellow} />
+      <FlashList
+        data={teamMembers}
+        keyExtractor={(item) => item.uid}
+        renderItem={({ item }) => (
+          <View style={styles.memberCard}>
+            <ImageWithFallback
+              uri={item.photoURL}
+              style={styles.memberImage}
+              iconSize={50}
+              iconColor="white"
+            />
+            <Text style={styles.memberName}>{formatName(item.name)}</Text>
+            <View style={styles.skillsContainer}>
+              {item.skills.map((skill: string, index: number) => (
+                <Text key={index} style={styles.skill}>
+                  {skill}
+                </Text>
+              ))}
+            </View>
+            <Button
+              textStyle={styles.btnText}
+              style={styles.profileButton}
+              onPress={() => openTeamMemberProfile(item.uid)}
+            >
+              See Profile
+            </Button>
+          </View>
+        )}
+        estimatedItemSize={160}
+      />
 
-          <BottomSheet
-            ref={bottomSheetRef}
-            snapPoints={snapPoints}
-            index={-1}
-            enablePanDownToClose={true}
-            handleIndicatorStyle={{
-              backgroundColor: Colors.alternative,
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        index={-1}
+        enablePanDownToClose={true}
+        handleIndicatorStyle={{
+          backgroundColor: Colors.alternative,
 
-              width: 40,
-              height: 5,
-              borderRadius: 5,
-            }}
-            backgroundStyle={{
-              backgroundColor: Colors.yellow,
-            }}
-            onClose={afterCloseResetContent}
-          >
-            <BottomSheetScrollView style={styles.contentContainer}>
-              {ContentComponent}
-            </BottomSheetScrollView>
-          </BottomSheet>
-        </>
-      )}
+          width: 40,
+          height: 5,
+          borderRadius: 5,
+        }}
+        backgroundStyle={{
+          backgroundColor: Colors.yellow,
+        }}
+        onClose={afterCloseResetContent}
+      >
+        <BottomSheetScrollView style={styles.contentContainer}>
+          {ContentComponent}
+        </BottomSheetScrollView>
+      </BottomSheet>
     </GestureHandlerRootView>
   );
 };

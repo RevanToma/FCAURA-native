@@ -14,6 +14,7 @@ import { DocumentData } from "firebase/firestore";
 import { Colors } from "../../constants/Colors";
 import { formatName, openURL } from "../../utils/helpers/Helpers";
 import ImageWithFallback from "../../utils/helpers/ImageWithFallback";
+import Spinner from "react-native-loading-spinner-overlay";
 
 type Props = {
   onClose?: () => void;
@@ -35,51 +36,48 @@ const TeamMemberProfileCard: React.FC<Props> = ({ uid }) => {
     fetchProfile(uid);
   }, []);
 
-  const userPorfileImage = profileData?.photoURL
-    ? { uri: profileData?.photoURL }
-    : require("../../assets/images/avatar.jpg");
+  // const userPorfileImage = profileData?.photoURL
+  //   ? { uri: profileData?.photoURL }
+  //   : require("../../assets/images/avatar.jpg");
 
   return (
     <View style={styles.root}>
-      {loading ? (
-        <ActivityIndicator size="large" color={Colors.yellow} />
-      ) : (
-        <View style={styles.cardContainer}>
-          <Image
-            source={require("../../assets/images/FCAURA-Logo.png")}
-            style={styles.logo}
+      <Spinner visible={loading} color={Colors.yellow} />
+      <View style={styles.cardContainer}>
+        <Image
+          source={require("../../assets/images/FCAURA-Logo.png")}
+          style={styles.logo}
+        />
+        <View style={styles.avatarContainer}>
+          <ImageWithFallback
+            uri={profileData?.photoURL}
+            style={styles.avatar}
+            iconSize={50}
+            iconColor="white"
           />
-          <View style={styles.avatarContainer}>
-            <ImageWithFallback
-              uri={profileData?.photoURL}
-              style={styles.avatar}
-              iconSize={50}
-              iconColor="white"
-            />
-          </View>
-          <Text style={[styles.text, styles.nameTxt]}>
-            {formatName(profileData?.name)}
-          </Text>
-          <Text style={[styles.text, styles.positionTxt]}>
-            {profileData?.position}
-          </Text>
-          <Text style={[styles.text, styles.bioTxt]}> {profileData?.bio}</Text>
-          <TouchableOpacity onPress={() => openURL(profileData?.instagram)}>
-            <Image
-              source={require("../../assets/images/instagram.png")}
-              style={{ width: 50 }}
-            />
-          </TouchableOpacity>
-
-          <View style={styles.skillListContainer}>
-            {profileData?.skills.map((skill: string, index: number) => (
-              <View key={index} style={styles.skillContainer}>
-                <Text style={styles.skillText}>{skill}</Text>
-              </View>
-            ))}
-          </View>
         </View>
-      )}
+        <Text style={[styles.text, styles.nameTxt]}>
+          {formatName(profileData?.name)}
+        </Text>
+        <Text style={[styles.text, styles.positionTxt]}>
+          {profileData?.position}
+        </Text>
+        <Text style={[styles.text, styles.bioTxt]}> {profileData?.bio}</Text>
+        <TouchableOpacity onPress={() => openURL(profileData?.instagram)}>
+          <Image
+            source={require("../../assets/images/instagram.png")}
+            style={{ width: 50 }}
+          />
+        </TouchableOpacity>
+
+        <View style={styles.skillListContainer}>
+          {profileData?.skills.map((skill: string, index: number) => (
+            <View key={index} style={styles.skillContainer}>
+              <Text style={styles.skillText}>{skill}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
     </View>
   );
 };
