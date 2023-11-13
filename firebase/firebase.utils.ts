@@ -31,6 +31,9 @@ import {
 import { db } from "./firebase.auth";
 import { Alert } from "react-native";
 import { User } from "../types";
+import { useSelector } from "react-redux";
+import { IMessage } from "react-native-gifted-chat";
+import { MyMessage } from "../screens/Chat";
 
 type Auth = {
   mode?: "signUp" | "signInWithPassword";
@@ -332,17 +335,15 @@ export const rejectOrApproveApplicants = async (
   }
 };
 
-export const sendMessage = async (
-  text: string,
-  senderId: string,
-  photoURL: string
-) => {
+export const sendMessage = async (messageData: any) => {
   try {
     await addDoc(collection(db, "messages"), {
-      text,
-      senderId,
+      text: messageData.text,
+      senderId: messageData.user._id,
+      photoURL: messageData.user.avatar,
+      userName: messageData.user.name,
       timestamp: serverTimestamp(),
-      photoURL: photoURL,
+      replyMessage: messageData.replyMessage, // Add reply context if available
     });
   } catch (error) {
     console.error("Error sending message: ", error);

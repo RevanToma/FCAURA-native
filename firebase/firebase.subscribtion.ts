@@ -8,6 +8,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase.auth";
 import { IMessage } from "react-native-gifted-chat";
+import { MyMessage } from "../screens/Chat";
 
 export const subscribeToTeamMembers = (
   callback: (members: DocumentData[]) => void
@@ -62,7 +63,7 @@ export const subscribeToApplicants = (
 //   return unsubscribe;
 // };
 export const subscribeToMessages = (
-  callback: (messages: IMessage[]) => void
+  callback: (messages: MyMessage[]) => void
 ) => {
   const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
 
@@ -75,8 +76,10 @@ export const subscribeToMessages = (
         : new Date(),
       user: {
         _id: doc.data().senderId,
+        name: doc.data().userName,
         avatar: doc.data().photoURL,
       },
+      replyMessage: doc.data().replyMessage,
     }));
     callback(messages);
   });
