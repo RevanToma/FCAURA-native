@@ -25,19 +25,29 @@ import {
 } from "react-native-gesture-handler";
 import { MyMessage } from "../types";
 import { getColorForUsername } from "../utils/helpers/Helpers";
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import { Ionicons } from "@expo/vector-icons";
 
+const CustomComposer = (props: any) => {
+  return (
+    <View>
+      <Composer
+        {...props}
+        textInputStyle={{ color: "#fff" }}
+        keyboardAppearance="dark"
+      />
+      <TouchableOpacity>
+        <Ionicons name="image-sharp" size={24} color="#000" />
+      </TouchableOpacity>
+    </View>
+  );
+};
 const renderCustomInputToolBar = (props: InputToolbarProps<any>) => {
   return (
     <InputToolbar
       {...props}
       containerStyle={styles.inputContainer}
-      renderComposer={(composerProps) => (
-        <Composer
-          {...composerProps}
-          textInputStyle={{ color: "#fff" }}
-          keyboardAppearance="dark"
-        />
-      )}
+      renderComposer={CustomComposer}
       accessoryStyle={styles.replyBarContainer}
     />
   );
@@ -117,7 +127,8 @@ const renderUsername = (props: any) => {
         {...props}
         style={{
           color: usernameColor,
-          margin: 5,
+          // margin: 5,
+          marginHorizontal: 5,
           fontSize: 12,
         }}
       >
@@ -224,6 +235,7 @@ const Chat = () => {
         renderCustomView={renderReplyMessageView}
         bottomOffset={Platform.OS === "ios" && !replyToMessage ? 130 : 80}
         renderBubble={renderBubble}
+        renderAvatarOnTop
       />
     </GestureHandlerRootView>
   );
