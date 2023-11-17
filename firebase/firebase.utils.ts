@@ -111,8 +111,8 @@ export const signInWithEmail = async (email: string, password: string) => {
 
 export const saveToFirebase = async (uid: string, profileData: ProfileData) => {
   try {
-    const userRef = doc(collection(db, "users"), uid); // Use the UID as the document ID
-    await setDoc(userRef, profileData); // Will create a new doc or overwrite an existing one with the same ID
+    const userRef = doc(collection(db, "users"), uid);
+    await setDoc(userRef, profileData);
     return uid;
   } catch (error: any) {
     console.error("Error saving document: ", error);
@@ -209,7 +209,7 @@ export const updateFirebaseUserEmail = async (newEmail: string) => {
 
 export const fetchUserFromFirebase = async (uid: string) => {
   try {
-    const userRef = doc(db, "users", uid); // Use the UID to reference the document
+    const userRef = doc(db, "users", uid);
     const docSnap = await getDoc(userRef);
 
     if (docSnap.exists()) {
