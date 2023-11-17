@@ -16,7 +16,7 @@ export type SignedInStackParamList = {
   TeamMembers: undefined;
   Chat: undefined;
   Settings: undefined;
-  SetupNavigator: { screen?: keyof SetupStackParamList }; // This allows you to optionally specify a screen in the SetupNavigator
+  SetupNavigator: { screen?: keyof SetupStackParamList }; // This allows me to optionally specify a screen in the SetupNavigator
 };
 
 export type MainStackParamList = {
